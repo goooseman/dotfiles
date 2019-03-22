@@ -1,0 +1,4 @@
+0000000000000000000000000000000000000000 686e46025890cba38d2cb7ad7cc229bf6beeba57 goooseman <inbox@goooseman.ru> 1452030750 +0300	clone: from https://github.com/robbyrussell/oh-my-zsh.git
+686e46025890cba38d2cb7ad7cc229bf6beeba57 0d0042aad33562877dffd12baa6fe86e40642241 goooseman <inbox@goooseman.ru> 1455957844 +0200	rebase finished: refs/heads/master onto 0d0042aad33562877dffd12baa6fe86e40642241
+0d0042aad33562877dffd12baa6fe86e40642241 6ee6a734c24b8f2cda43f230142f0f02cfb52fb3 Alexander Gusev <inbox@goooseman.ru> 1480579669 +0200	rebase finished: refs/heads/master onto 6ee6a734c24b8f2cda43f230142f0f02cfb52fb3
+6ee6a734c24b8f2cda43f230142f0f02cfb52fb3 a29950146b9d992caf880679dfce90c6a1ef2eea goooseman <goooseman@me.com> 1546943592 +0200	pull --rebase --stat origin master: Fast-forward
