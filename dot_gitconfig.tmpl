@@ -1,0 +1,17 @@
+{{- if (index . "git") }}
+[user]
+	name = {{ .git.name }}
+	email = {{ .git.email }}
+{{- end }}
+
+[core]
+	editor = code --wait
+# This is to unlock VSCode as your git diff and git merge tool
+[merge]
+    tool = vscode
+[mergetool "vscode"]
+    cmd = code --wait $MERGED
+[diff]
+    tool = vscode
+[difftool "vscode"]
+    cmd = code --wait --diff $LOCAL $REMOTE
