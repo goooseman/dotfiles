@@ -10,7 +10,6 @@ POWERLEVEL9K_CUSTOM_COMMAND_TIME_FOREGROUND="000" # black
 
 ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=15
 
-# ZSH_THEME="robbyrussell"
 ZSH_THEME="powerlevel9k/powerlevel9k"
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir vcs)
 POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status root_indicator background_jobs history time ram custom_command_time)
@@ -19,7 +18,17 @@ POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status root_indicator background_jobs histor
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git git-flow autojump sublime sudo zsh-autosuggestions command-time docker kubectl)
+plugins=(
+    git
+    git-flow
+    autojump
+    sublime
+    sudo
+    zsh-autosuggestions
+    command-time
+    docker
+    kubectl
+)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -35,12 +44,16 @@ export KOPS_BUCKET_NAME=trucknet-kops-state-store
 export KOPS_CLUSTER_NAME=k8s-staging.trucknet.io
 export KOPS_STATE_STORE=s3://${KOPS_BUCKET_NAME}
 
+for file in ~/.dotfiles/source/{boot,path,aliases}/*; do
+    [ -r "$file" ] && source "$file"
+done
+
+# Add dotfiles bin to final path
+export PATH="$HOME/.dotfiles/bin:$PATH"
+
 {{if eq .chezmoi.os "darwin"}}
 for file in ~/.dotfiles/source/{boot,path}/osx/*; do
     [ -r "$file" ] && source "$file"
 done
+export PATH="$HOME/.dotfiles/bin/osx:$PATH"
 {{end}}
-
-for file in ~/.dotfiles/source/{boot,path,aliases}/*; do
-    [ -r "$file" ] && source "$file"
-done
