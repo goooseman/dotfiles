@@ -1,0 +1,11 @@
+- name: Install zsh
+  apt:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - zsh
+
+ - name: Change user shell to zsh
+      become: yes
+      become_user: root
+      command: chsh -s /bin/zsh "{{ username }}"

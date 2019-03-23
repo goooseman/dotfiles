@@ -1,0 +1,24 @@
+- name: Check if there is a chezmoi config file
+  stat:
+    path: $HOME/.config/chezmoi/chezmoi.json
+  register: config_File
+
+- pause:
+    prompt: "I need your full name and email address, so git will save this information in every commit you make. What is your full name?"
+  register: git_name
+  when: config_File.stat.exists == False
+
+- pause:
+    prompt: "What is your email address?"
+  register: git_email
+  when: config_File.stat.exists == False
+
+- name: chezmoi config file generation
+  template:
+    src: chezmoi.json.j2
+    dest: $HOME/.config/chezmoi/chezmoi.json
+  when: config_File.stat.exists == False
+
+- name: run chezmoi apply
+  command: chezmoi -v apply
+  when: config_File.stat.exists == False

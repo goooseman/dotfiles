@@ -1,0 +1,14 @@
+- name: Enable universe repository (required for fonts-firacode)
+  shell: add-apt-repository universe
+  sudo: yes
+
+- name: Install a list of packages
+  apt:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - git-flow
+    - openjdk-8-jdk
+    - qemu-kvm
+    - autojump
+    - fonts-firacode

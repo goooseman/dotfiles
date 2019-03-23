@@ -1,0 +1,17 @@
+- name: Check if fnm is installed
+  stat:
+    path: $HOME/.fnm
+  register: fnm_folder
+
+- name: install fnm
+  shell: curl https://raw.githubusercontent.com/Schniz/fnm/master/.ci/install.sh | bash -s -- --skip-shell
+  when: fnm_folder.stat.exists == False
+
+- name: Activate fnm
+  shell: eval "`fnm env --multi`"
+
+- name: Install node 10.14
+  command: fnm install 10.14
+
+- name: Use node 10.14
+  command: fnm use 10.14

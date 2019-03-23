@@ -1,0 +1,52 @@
+---
+
+- hosts: servers
+  roles:
+    - role: gantsign.visual-studio-code
+      users:
+        - username:
+          visual_studio_code_extensions:
+            - eamodio.gitlens
+            - dbaeumer.vscode-eslint
+            - ms-vscode.vscode-typescript-tslint-plugin
+            - esbenp.prettier-vscode
+          visual_studio_code_settings: {
+            "editor.rulers": [80, 100, 120],
+            "workbench.editor.enablePreview": false,
+            "editor.fontFamily": "Fira Code",
+            "editor.fontLigatures": true,
+          }
+
+- hosts: appbuild
+# https://facebook.github.io/react-native/docs/0.58/getting-started.html
+  vars:
+    android_sdk_update_path: false
+    android_sdk_base_buildtools_version: 28.0.3 # Used for PATH when android_sdk_update_path is true
+    android_sdk_tools_to_install:
+      - platform-tools
+      - tools
+      - extra-android-support
+      - "Intel x86 Atom_64 System Image"
+      - "Google APIs Intel x86 Atom System Image"
+    android_sdks_to_install:
+      - android-28
+      - android-27
+  roles:
+    - { role: nickpack.android_sdk }
+
+- hosts: servers
+  roles:
+     - wtanaka.android-studio
+
+- hosts: servers
+  roles:
+    - role: gantsign.maven
+      inotify_max_user_watches: 524288
+
+- hosts: all
+  roles:
+    - common/chezmoi
+    - common/fnm
+    - ubuntu/android-studio-icon
+    - ubuntu/apt
+    - ubuntu/zsh
