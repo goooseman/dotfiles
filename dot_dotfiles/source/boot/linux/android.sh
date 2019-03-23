@@ -1,0 +1,1 @@
+export ANDROID_HOME=/opt/Android/sdk
