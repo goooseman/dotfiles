@@ -3,8 +3,16 @@
     path: $HOME/.fnm
   register: fnm_folder
 
-- name: install fnm
-  shell: curl https://raw.githubusercontent.com/Schniz/fnm/master/.ci/install.sh | bash -s -- --skip-shell
+- name: Download fnm installer
+  get_url: url=https://raw.githubusercontent.com/Schniz/fnm/master/.ci/install.sh dest=/tmp/fnm-installer.sh
+  when: fnm_folder.stat.exists == False
+
+- name: Execute the fnm-installer.sh
+  script: /tmp/fnm-installer.sh --skip-shell
+  when: fnm_folder.stat.exists == False
+
+- name: Remove the fnm-installer.sh
+  file: path=/tmp/fnm-installer.sh state=absent
   when: fnm_folder.stat.exists == False
 
 - name: Activate fnm

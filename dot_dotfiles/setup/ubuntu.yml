@@ -1,6 +1,12 @@
----
+- hosts: all
+  roles:
+    - common/chezmoi
+    - common/fnm
+    - ubuntu/android-studio-icon
+    - ubuntu/apt
+    - ubuntu/zsh
 
-- hosts: servers
+- hosts: all
   roles:
     - role: gantsign.visual-studio-code
       users:
@@ -17,9 +23,10 @@
             "editor.fontLigatures": true,
           }
 
-- hosts: appbuild
+- hosts: all
 # https://facebook.github.io/react-native/docs/0.58/getting-started.html
   vars:
+    android_sdk_install_location: /opt/Android
     android_sdk_update_path: false
     android_sdk_base_buildtools_version: 28.0.3 # Used for PATH when android_sdk_update_path is true
     android_sdk_tools_to_install:
@@ -34,19 +41,11 @@
   roles:
     - { role: nickpack.android_sdk }
 
-- hosts: servers
+- hosts: all
   roles:
      - wtanaka.android-studio
 
-- hosts: servers
+- hosts: all
   roles:
     - role: gantsign.maven
       inotify_max_user_watches: 524288
-
-- hosts: all
-  roles:
-    - common/chezmoi
-    - common/fnm
-    - ubuntu/android-studio-icon
-    - ubuntu/apt
-    - ubuntu/zsh
