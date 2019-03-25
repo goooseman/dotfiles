@@ -10,7 +10,7 @@
   roles:
     - role: gantsign.visual-studio-code
       users:
-        - username:
+        - username: "{{ ansible_env.USER }}"
           visual_studio_code_extensions:
             - eamodio.gitlens
             - dbaeumer.vscode-eslint
