@@ -4,6 +4,8 @@
   vars:
     packages:
     - zsh
+  become: yes
+  become_user: root
 
 - name: Change user shell to zsh
   become: yes
