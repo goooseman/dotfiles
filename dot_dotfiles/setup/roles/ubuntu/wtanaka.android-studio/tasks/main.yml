@@ -1,0 +1,42 @@
+---
+- include: compat.yml
+
+- include: include_vars.yml
+
+- include: Debian.yml
+  when: ansible_os_family == 'Debian'
+
+- name: install unzip with default package manager
+  action: "{{backcompat_pkg_mgr}} name={{package_name}}"
+  sudo: yes
+  when: backcompat_pkg_mgr == "yum" or backcompat_pkg_mgr == "apt"
+
+# Use command since dnf was only added as a module in ansible 1.9.0
+- name: install unzip with dnf
+  command: dnf install -y {{package_name}}
+  args:
+    creates: /usr/bin/unzip
+  sudo: yes
+  when: backcompat_pkg_mgr == "dnf"
+
+- name: Check if android studio is installed
+  command: grep {{android_studio_build}} {{install_dir}}/build.txt
+  register: install
+  failed_when: False
+  changed_when: False
+
+- name: Download Android Studio .zip
+  command: wget -q -O {{local_package_location}} {{linux_url}}
+  args:
+    creates: "{{local_package_location}}"
+  when: install.stdout.find(android_studio_build) == -1
+
+- name: Uncompress Android Studio
+  command: rm -rf {{install_dir}}
+  sudo: True
+  when: install.stdout.find(android_studio_build) == -1
+
+- name: Uncompress Android Studio
+  command: unzip -od /opt {{local_package_location}}
+  sudo: True
+  when: install.stdout.find(android_studio_build) == -1

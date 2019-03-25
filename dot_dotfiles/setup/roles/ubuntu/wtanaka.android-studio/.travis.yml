@@ -1,0 +1,26 @@
+language: ruby
+rvm:
+- 2.2
+- 2.1
+- 2.0
+- 1.9.3
+sudo: false
+services:
+- docker
+script:
+- >
+  wget -O- bit.ly/ansibletest | env DOCKER_IMAGES="debian:8
+  ubuntu:12.04 ubuntu:16.04"
+  ANSIBLE_VERSIONS="1.4.4 1.6.1 1.8.4 2.0.0.2 2.1.0.0" sh -x
+after_failure:
+- cat role-tester-ansible-master/.kitchen/logs/*.log | grep -v '^I, '
+notifications:
+  webhooks: https://galaxy.ansible.com/api/v1/notifications/
+  slack:
+    on_success: change
+    on_failure: change
+    rooms:
+      - secure: OeZF6BkPoOAcHz3Jxq/gvLTnbicqH8Qfs4Oqj8WEhhmGYYfe3fe2qpFa+zKCDkimr0RdF2RGh8swgg4RVbWAkW929hJ/iFB0BleTlTKsUYqe/CS1/yzKtBLX6vd6VbmAgbHANqjzpZYyLSd1phe4x7hWKsV0NVE6u/+XzWeuwIy7eIBVRLfCb3fA79N9jCCpDmZsPu39BL6QB4lq5TLJRD/QX5ARAj26KeRtZqrzRkNOw75tyIooyh/uEP6CtJtu36yvq1RmIJbalchAAcUpwYm6JwSBbhhwMpbRuPLqd7b5IIL4KA01CB1t1yHNJsalA6ejbyzGBRhVoAgHUjVSBqDOZt8Rb/ATbDc3AKqjGzg0LId91dgqzvW6cqUbQldUvjcJn8ztEbZoZl4s9c2pmt4uzVwnF5gvPXOSa+yY+/1Vxg3WRUeeq6nf2ESIj4SNhKDopjoY2DU8VqyzVQcsroaAemmiXk8ia6TGt4uW1BicLXtRawuhFpxrftJAZ0B9UPLWzagzUosawA9jcTSJ1tKTwo5fwVETM/dwxA1cffu9uiOKVxxlh6523aDxS/h+UvAkRpcxko/dvQfvTibMgq3zSaiC7R5Mk9zYlv847BdyBB804Sn7B1ReMVRqsrXwapcixLKgb64kPihckgzYGHYGRupK3kcqy6uZjqcbEwM=
+  email:
+    recipients:
+    - secure: EktnXS0a5NWdkCT3aPpArOkeXIL4WDHWq7FjLxy09zKiJdiyOSQ4rAtI5ir3Lzms2Snea5bDLQKQ1MgnmXXOG/2xekydWRIv60AEVMVw53EJEuwPj6FUJgbvUuwztFMabTs476Jx+WRYmadj7PF3x2nxtR7BesVJFnIEvNui1X/ohSzwYjZzI/6dBGVLMkwiIQ7r7DXuWf1UUfj/IV2pE2PVnyt5cRgKN25uLjq25w0g6XtzvB2zDMWL/x4Whq0R0Sj787K9a8VGw/9nvINUCMM+JeTryLgJKZKjFPHDpFPcAXrOdgeO4FFLGF3JU56yEeUSXibVnYhG5keYjued3FtUWTyvM8UWoxT9SHN/zp4/r6rrTpImKhRQeg0KsadTs2OkLenshUc4dUmrNQpN+LO+hB6aq5232SZxmXkxoHg/bAQsL5PXwHrpJYLebXdvXhLod4V0FhzT6Yq+nHZihzk7kYj2UEAlASCD0WRa95as8AVYu8fYp3r2TejukFiFMtg8u+BWXt7Ev/+n5uItmu+N7Ak2ln4loeV1HxdSUMNUGLXuoTab8+c3KDaGvWW5BIhkAOx/g+KE2kmbnKw0zI60JYMJsGTKli4/DuG578Ippui07NBkun2EdfT2c5kiXcKa53+27JPcMfHDaOdPxTNpoG0fgxpHYkS5Qx1+8ec=

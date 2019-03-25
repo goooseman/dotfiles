@@ -1,15 +1,15 @@
 - name: Create a .desktop entry for android-studio
-    copy:
-      dest: "/usr/share/applications"
-      content: |
-        [Desktop Entry]
-        Version=1.0
-        Type=Application
-        Name=Android Studio
-        Exec=bash -i "/opt/android-studio/bin/studio.sh" %f
-        Icon=/opt/android-studio/bin/studio.png
-        Categories=Development;IDE;
-        Terminal=false
-        StartupNotify=true
-        StartupWMClass=jetbrains-android-studio
-        Name[en_GB]=android-studio.desktop
+  copy:
+    dest: "/usr/share/applications"
+    content: |
+      [Desktop Entry]
+      Version=1.0
+      Type=Application
+      Name=Android Studio
+      Exec=bash -i "/opt/android-studio/bin/studio.sh" %f
+      Icon=/opt/android-studio/bin/studio.png
+      Categories=Development;IDE;
+      Terminal=false
+      StartupNotify=true
+      StartupWMClass=jetbrains-android-studio
+      Name[en_GB]=android-studio.desktop

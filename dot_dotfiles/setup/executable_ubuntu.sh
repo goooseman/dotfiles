@@ -10,6 +10,10 @@ install_ansible () {
 # Install Ansible, if not already installed
 which ansible-playbook > /dev/null || install_ansible
 
+# Install requirements
+
+ansible-galaxy install -r ubuntu_requirements.yml
+
 # Provision machine with ansible
 
 if [ -z "$1" ];

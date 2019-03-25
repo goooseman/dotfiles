@@ -43,7 +43,7 @@
 
 - hosts: all
   roles:
-     - wtanaka.android-studio
+     - ubuntu/wtanaka.android-studio
 
 - hosts: all
   roles:
