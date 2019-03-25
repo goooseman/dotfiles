@@ -1,6 +1,6 @@
 - name: Create a .desktop entry for android-studio
   copy:
-    dest: "/usr/share/applications"
+    dest: "/usr/share/applications/android-studio.desktop"
     content: |
       [Desktop Entry]
       Version=1.0
