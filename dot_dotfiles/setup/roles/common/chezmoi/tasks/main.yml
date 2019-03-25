@@ -13,6 +13,10 @@
   register: git_email
   when: config_File.stat.exists == False
 
+- name: Create target directory
+  file: path=$HOME/.config/chezmoi state=directory mode=0755
+  when: config_File.stat.exists == False
+
 - name: chezmoi config file generation
   template:
     src: chezmoi.json.j2
