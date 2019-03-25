@@ -1,2 +1,4 @@
 alias cls="printf '\033c'"
-alias -g G=" | rg"
+if [ -n "$ZSH_VERSION" ]; then
+    alias -g G=" | rg"
+fi
