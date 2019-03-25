@@ -22,9 +22,13 @@
   become_user: root
   become: yes
 
+- name: Get ubuntu release name
+  command: lsb_release -u -cs
+  register: lsb_release
+
 - name: Docker apt repository
   apt_repository:
-    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ lsb_release }} stable
     state: present
   become_user: root
   become: yes
