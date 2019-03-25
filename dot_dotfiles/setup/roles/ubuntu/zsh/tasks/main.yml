@@ -10,4 +10,4 @@
 - name: Change user shell to zsh
   become: yes
   become_user: root
-  command: chsh -s /bin/zsh "{{ username }}"
+  command: chsh -s $(which zsh)
