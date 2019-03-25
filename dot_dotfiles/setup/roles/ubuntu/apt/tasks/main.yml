@@ -38,6 +38,7 @@
     name: "{{ packages }}"
   vars:
     packages:
+    - expect
     - git-flow
     - openjdk-8-jdk
     - qemu-kvm

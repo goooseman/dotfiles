@@ -7,6 +7,12 @@
     - ubuntu/zsh
 
 - hosts: all
+  vars:
+    inotify_max_user_watches: 524288
+  roles:
+    - ubuntu/inotify
+
+- hosts: all
   roles:
     - role: gantsign.visual-studio-code
       users:
@@ -25,8 +31,12 @@
 
 - hosts: all
 # https://facebook.github.io/react-native/docs/0.58/getting-started.html
+  become: yes
+  become_user: root
+  become_method: sudo
   vars:
-    android_sdk_install_location: /opt/Android
+    ansible_os_family: Debian
+    android_sdk_install_location: /opt
     android_sdk_update_path: false
     android_sdk_base_buildtools_version: 28.0.3 # Used for PATH when android_sdk_update_path is true
     android_sdk_tools_to_install:
@@ -41,11 +51,6 @@
   roles:
     - { role: nickpack.android_sdk }
 
-- hosts: all
-  roles:
-     - ubuntu/wtanaka.android-studio
-
-- hosts: all
-  roles:
-    - role: gantsign.maven
-      inotify_max_user_watches: 524288
+# - hosts: all
+#   roles:
+#      - ubuntu/wtanaka.android-studio

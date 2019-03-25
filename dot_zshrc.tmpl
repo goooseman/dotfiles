@@ -59,8 +59,5 @@ export PATH="$HOME/.dotfiles/bin/osx:$PATH"
 {{end}}
 
 {{if eq .chezmoi.os "linux"}}
-for file in ~/.dotfiles/source/{boot,path}/linux/*; do
-    [ -r "$file" ] && source "$file"
-done
 export PATH="$HOME/.dotfiles/bin/linux:$PATH"
 {{end}}

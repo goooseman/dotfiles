@@ -1,0 +1,12 @@
+---
+# The upper limit on the number of events that can be queued to the corresponding inotify instance.
+inotify_max_queued_events:
+
+# The upper limit on the number of inotify instances that can be created per real user ID.
+inotify_max_user_instances:
+
+# The upper limit on the number of watches that can be created per real user ID.
+inotify_max_user_watches:
+
+# The file to save inotify config to.
+inotify_sysctl_file: '/etc/sysctl.d/20-ansible-inotify.conf'

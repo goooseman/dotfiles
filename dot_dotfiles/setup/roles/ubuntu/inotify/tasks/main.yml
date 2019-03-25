@@ -1,0 +1,37 @@
+---
+- name: install sysctl (apt)
+  become: yes
+  apt:
+    name: procps
+    state: present
+  when: "ansible_pkg_mgr == 'apt'"
+
+- name: Set max_queued_events
+  become: yes
+  sysctl:
+    name: fs.inotify.max_queued_events
+    value: '{{ inotify_max_queued_events }}'
+    state: present
+    reload: "{{ (not ansible_virtualization_type is defined) or ansible_virtualization_type != 'docker' }}"
+    sysctl_file: '{{ inotify_sysctl_file }}'
+  when: "inotify_max_queued_events is defined and inotify_max_queued_events not in (None, '', omit)"
+
+- name: Set max_user_instances
+  become: yes
+  sysctl:
+    name: fs.inotify.max_user_instances
+    value: '{{ inotify_max_user_instances }}'
+    state: present
+    reload: "{{ (not ansible_virtualization_type is defined) or ansible_virtualization_type != 'docker' }}"
+    sysctl_file: '{{ inotify_sysctl_file }}'
+  when: "inotify_max_user_instances is defined and inotify_max_user_instances not in (None, '', omit)"
+
+- name: Set max_user_watches
+  become: yes
+  sysctl:
+    name: fs.inotify.max_user_watches
+    value: '{{ inotify_max_user_watches }}'
+    state: present
+    reload: "{{ (not ansible_virtualization_type is defined) or ansible_virtualization_type != 'docker' }}"
+    sysctl_file: '{{ inotify_sysctl_file }}'
+  when: "inotify_max_user_watches is defined and inotify_max_user_watches not in (None, '', omit)"
