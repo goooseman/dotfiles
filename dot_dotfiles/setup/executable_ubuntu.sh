@@ -14,6 +14,10 @@ which ansible-playbook > /dev/null || install_ansible
 
 ansible-galaxy install -r ubuntu_requirements.yml
 
+# Get a sudo password in the current shell
+
+sudo echo "I'm a superuser"
+
 # Provision machine with ansible
 
 if [ -z "$1" ];

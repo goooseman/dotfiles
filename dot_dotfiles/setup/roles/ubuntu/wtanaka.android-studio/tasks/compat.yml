@@ -86,7 +86,7 @@
   sudo: yes
   when: >
     (backcompat_pkg_mgr == "yum" or backcompat_pkg_mgr == "apt")
-       and wget_result|failed
+       and wget_result is failed
 
 # Install wget due to https://github.com/ansible/ansible/issues/12161
 # Use command since dnf was only added as a module in ansible 1.9.0

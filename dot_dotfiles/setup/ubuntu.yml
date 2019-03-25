@@ -1,33 +1,33 @@
-- hosts: all
-  roles:
-    - common/chezmoi
-    - common/fnm
-    - ubuntu/android-studio-icon
-    - ubuntu/apt
-    - ubuntu/zsh
+# - hosts: all
+#   roles:
+#     - common/chezmoi
+#     - common/fnm
+#     - ubuntu/android-studio-icon
+#     - ubuntu/apt
+#     - ubuntu/zsh
 
-- hosts: all
-  vars:
-    inotify_max_user_watches: 524288
-  roles:
-    - ubuntu/inotify
+# - hosts: all
+#   vars:
+#     inotify_max_user_watches: 524288
+#   roles:
+#     - ubuntu/inotify
 
-- hosts: all
-  roles:
-    - role: gantsign.visual-studio-code
-      users:
-        - username: "{{ ansible_env.USER }}"
-          visual_studio_code_extensions:
-            - eamodio.gitlens
-            - dbaeumer.vscode-eslint
-            - ms-vscode.vscode-typescript-tslint-plugin
-            - esbenp.prettier-vscode
-          visual_studio_code_settings: {
-            "editor.rulers": [80, 100, 120],
-            "workbench.editor.enablePreview": false,
-            "editor.fontFamily": "Fira Code",
-            "editor.fontLigatures": true,
-          }
+# - hosts: all
+#   roles:
+#     - role: gantsign.visual-studio-code
+#       users:
+#         - username: "{{ ansible_env.USER }}"
+#           visual_studio_code_extensions:
+#             - eamodio.gitlens
+#             - dbaeumer.vscode-eslint
+#             - ms-vscode.vscode-typescript-tslint-plugin
+#             - esbenp.prettier-vscode
+#           visual_studio_code_settings: {
+#             "editor.rulers": [80, 100, 120],
+#             "workbench.editor.enablePreview": false,
+#             "editor.fontFamily": "Fira Code",
+#             "editor.fontLigatures": true,
+#           }
 
 - hosts: all
 # https://facebook.github.io/react-native/docs/0.58/getting-started.html
@@ -36,21 +36,21 @@
   become_method: sudo
   vars:
     ansible_os_family: Debian
-    android_sdk_install_location: /opt
+    android_sdk_install_location: /opt/Android/sdk
     android_sdk_update_path: false
     android_sdk_base_buildtools_version: 28.0.3 # Used for PATH when android_sdk_update_path is true
     android_sdk_tools_to_install:
       - platform-tools
       - tools
       - extra-android-support
-      - "Intel x86 Atom_64 System Image"
-      - "Google APIs Intel x86 Atom System Image"
     android_sdks_to_install:
       - android-28
       - android-27
   roles:
     - { role: nickpack.android_sdk }
 
-# - hosts: all
-#   roles:
-#      - ubuntu/wtanaka.android-studio
+- hosts: all
+  vars:
+    ansible_os_family: Debian
+  roles:
+     - ubuntu/wtanaka.android-studio
