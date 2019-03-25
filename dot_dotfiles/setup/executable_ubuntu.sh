@@ -19,8 +19,8 @@ ansible-galaxy install -r ubuntu_requirements.yml
 if [ -z "$1" ];
 then
     : # $1 was not given
-    ansible-playbook -i "localhost," -c local --become-method=su --ask-pass --ask-become-pass ubuntu.yml
+    ansible-playbook -i "localhost," -c local --become-method=su --ask-become-pass ubuntu.yml
 else
     : # $1 was given
-    ansible-playbook -i "localhost," -c local --become-method=su --ask-pass --ask-become-pass ubuntu.yml --start-at-task "$1"
+    ansible-playbook -i "localhost," -c local --become-method=su --ask-become-pass ubuntu.yml --start-at-task "$1"
 fi
