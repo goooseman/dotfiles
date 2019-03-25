@@ -13,3 +13,5 @@
       StartupNotify=true
       StartupWMClass=jetbrains-android-studio
       Name[en_GB]=android-studio.desktop
+  become_user: root
+  become: yes
