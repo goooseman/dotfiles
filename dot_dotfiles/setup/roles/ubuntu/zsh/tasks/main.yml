@@ -9,6 +9,6 @@
 
 - name: Change user shell to zsh
   user:
-    name: {{ ansible_env.USER }}
+    name: "{{ ansible_env.USER }}"
     shell: /usr/bin/zsh
   become: yes
