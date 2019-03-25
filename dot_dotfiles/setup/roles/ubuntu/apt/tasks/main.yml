@@ -49,5 +49,6 @@
     - docker-ce
     - docker-ce-cli
     - containerd.io
+    - xclip # For micro
   become_user: root
   become: yes
