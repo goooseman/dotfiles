@@ -28,7 +28,7 @@
   become: yes
   when: ansible_pkg_mgr == 'apt'
 
-- name: Install using brew
+- name: Install kubectl using brew
   homebrew:
     name: kubectl
     state: present

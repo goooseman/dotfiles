@@ -1,0 +1,4 @@
+- name: Install kops using brew
+  homebrew:
+    name: kops
+    state: present
