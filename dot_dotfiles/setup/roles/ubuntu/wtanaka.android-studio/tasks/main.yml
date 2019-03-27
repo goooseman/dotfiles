@@ -3,9 +3,6 @@
 
 - include: include_vars.yml
 
-- include: Debian.yml
-  when: ansible_os_family == 'Debian'
-
 - name: install unzip with default package manager
   action: "{{backcompat_pkg_mgr}} name={{package_name}}"
   sudo: yes
