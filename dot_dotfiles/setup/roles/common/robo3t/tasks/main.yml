@@ -1,0 +1,66 @@
+- name: Check if robo3t is installed
+  stat:
+    path: /opt/robo3t
+  register: robo3t_folder
+  when: ansible_distribution != 'MacOSX'
+
+- name: Ensure robo3t directory exists
+  file: path=/opt/robo3t state=directory
+  become_user: root
+  become: yes
+  when: ansible_distribution != 'MacOSX'
+
+- name: Download Robo3T archive
+  get_url: url=https://download.robomongo.org/1.2.1/linux/robo3t-1.2.1-linux-x86_64-3e50a65.tar.gz dest=/tmp/robo3t.tar.gz
+  when: robo3t_folder.stat.exists == False
+  when: ansible_distribution != 'MacOSX'
+
+- name: Extract robo3t tools
+  unarchive:
+    src: /tmp/robo3t.tar.gz
+    dest: /opt/robo3t
+    extra_opts: [--strip-components=1]
+  when: robo3t_folder.stat.exists == False
+  become_user: root
+  become: yes
+  when: ansible_distribution != 'MacOSX'
+
+- name: Change permissions on folder
+  file: path=/opt/robo3t recurse=yes mode=0777
+  when: robo3t_folder.stat.exists == False
+  become_user: root
+  become: yes
+  when: ansible_distribution != 'MacOSX'
+
+- name: Copy icon
+  copy:
+    src: ../assets/robo3t.png
+    dest: /opt/robo3t/robo3t.png
+  become_user: root
+  become: yes
+  when: ansible_distribution != 'MacOSX'
+
+- name: Create a .desktop entry for robo3t
+  copy:
+    dest: "/usr/share/applications/robo3t.desktop"
+    content: |
+      [Desktop Entry]
+      Version=1.0
+      Type=Application
+      Name=Robo3T
+      Exec=/opt/robo3t/bin/robo3t
+      Icon=/opt/robo3t/robo3t.png
+      Categories=Development;
+      Terminal=false
+      StartupNotify=true
+      StartupWMClass=robo3t
+      Name[en_GB]=robo3t.desktop
+  become_user: root
+  become: yes
+  when: ansible_distribution != 'MacOSX'
+
+- name: Install robo3t on mac
+  homebrew_cask:
+    name: robo3t
+    state: present
+  when: ansible_distribution == 'MacOSX'

@@ -9,3 +9,4 @@
   roles:
     - common/chezmoi
     - common/fnm
+    - common/robo3t
