@@ -3,6 +3,7 @@
   roles:
     - common/kubectl
     - osx/kops
+    - common/rvm
 
 - hosts: all
   roles:

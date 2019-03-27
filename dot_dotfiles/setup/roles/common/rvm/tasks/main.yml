@@ -1,0 +1,26 @@
+- name: Check if rvm is installed
+  stat:
+    path: $HOME/.rvm
+  register: rvm_folder
+
+- name: Check for mpapis gpg key
+  shell: gpg --list-keys mpapis
+  register: mpapis_gpg_key_exists
+  ignore_errors: true
+  when: rvm_folder.stat.exists == False
+
+- name: Receiving GPG key
+  shell: "curl -sSL https://rvm.io/mpapis.asc | gpg --import -"
+  when: mpapis_gpg_key_exists is defined and mpapis_gpg_key_exists.rc is defined and mpapis_gpg_key_exists.rc != 0
+
+- name: Download fnm installer
+  get_url: url=https://get.rvm.io dest=/tmp/rvm-installer.sh
+  when: rvm_folder.stat.exists == False
+
+- name: Execute the rvm-installer.sh
+  script: /tmp/rvm-installer.sh
+  when: rvm_folder.stat.exists == False
+
+- name: Remove the rvm-installer.sh
+  file: path=/tmp/rvm-installer.sh state=absent
+  when: rvm_folder.stat.exists == False
