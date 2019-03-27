@@ -6,3 +6,7 @@
   # Skip linting here, because I need to implement something more sane for checking pre-installed SDKs
   tags:
     - skip_ansible_lint
+
+- name: Change permissions on SDK tools
+  file: path={{ android_sdk_install_location }} recurse=yes mode=0777
+  when: is_android_sdk_installed.stat.exists == False

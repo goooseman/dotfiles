@@ -44,13 +44,15 @@
       - tools
       - extra-android-support
       - extra-emulator
-      - extra-google-m2repository
       - extra-android-m2repository
+      - extra-google-m2repository
+      - sys-img-x86_64-google_apis-28
     android_sdks_to_install:
       - android-28
       - android-27
   roles:
     - { role: ubuntu/nickpack.android_sdk }
+    - ubuntu/android-emulator
 
 - hosts: all
   vars:

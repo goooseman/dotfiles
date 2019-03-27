@@ -12,7 +12,7 @@ which ansible-playbook > /dev/null || install_ansible
 
 # Install requirements
 
-ansible-galaxy install -r ubuntu_requirements.yml
+ansible-galaxy install -r $HOME/.dotfiles/setup/ubuntu_requirements.yml
 
 # Get a sudo password in the current shell
 
@@ -23,8 +23,8 @@ sudo echo "I'm a superuser"
 if [ -z "$1" ];
 then
     : # $1 was not given
-    ansible-playbook -i "localhost," -c local --become-method=sudo ubuntu.yml
+    ansible-playbook -i "localhost," -c local --become-method=sudo $HOME/.dotfiles/setup/ubuntu.yml
 else
     : # $1 was given
-    ansible-playbook -i "localhost," -c local --become-method=sudo ubuntu.yml --start-at-task "$1"
+    ansible-playbook -i "localhost," -c local --become-method=sudo $HOME/.dotfiles/setup/ubuntu.yml --start-at-task "$1"
 fi

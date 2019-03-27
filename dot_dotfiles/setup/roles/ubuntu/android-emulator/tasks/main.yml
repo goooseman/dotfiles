@@ -1,0 +1,41 @@
+- name: Add current user to kvm group
+  command: adduser {{ ansible_env.USER }} kvm
+  become_user: root
+  become: yes
+
+- name: Create emulator for Nexus 5
+# We have to echo "no" because it will ask us if we want to use a custom hardware profile, and we don't.
+  command: |
+    $ANDROID_HOME/tools/android create avd \
+        --skin "1080x1920" \
+        --name "Nexus_5" \
+        --target "android-28" \
+        --abi "google_apis/x86_64" \
+        --device "Nexus 5"
+  register: result
+  failed_when: result.rc >= 2
+  become: no
+  
+- name: Create emulator for Nexus 7
+  command: |
+    $ANDROID_HOME/tools/android create avd \
+        --name "Nexus_7" \
+        --skin "800x1280" \
+        --target "android-28" \
+        --abi "google_apis/x86_64" \
+        --device "Nexus 7"
+  register: result
+  failed_when: result.rc >= 2
+  become: no
+
+- name: Create emulator for Nexus 10
+  command: |
+    $ANDROID_HOME/tools/android create avd \
+        --name "Nexus_10" \
+        --target "android-28" \
+        --skin "2560x1600" \
+        --abi "google_apis/x86_64" \
+        --device "Nexus 10"
+  register: result
+  failed_when: result.rc >= 2
+  become: no

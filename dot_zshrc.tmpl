@@ -44,20 +44,4 @@ export KOPS_BUCKET_NAME=trucknet-kops-state-store
 export KOPS_CLUSTER_NAME=k8s-staging.trucknet.io
 export KOPS_STATE_STORE=s3://${KOPS_BUCKET_NAME}
 
-for file in ~/.dotfiles/source/{boot,path,aliases}/*; do
-    [ -r "$file" ] && source "$file"
-done
-
-# Add dotfiles bin to final path
-export PATH="$HOME/.dotfiles/bin:$PATH"
-
-{{if eq .chezmoi.os "darwin"}}
-for file in ~/.dotfiles/source/{boot,path}/osx/*; do
-    [ -r "$file" ] && source "$file"
-done
-export PATH="$HOME/.dotfiles/bin/osx:$PATH"
-{{end}}
-
-{{if eq .chezmoi.os "linux"}}
-export PATH="$HOME/.dotfiles/bin/linux:$PATH"
-{{end}}
+source "$HOME/.dotfiles/source.sh"
