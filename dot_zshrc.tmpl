@@ -27,21 +27,7 @@ plugins=(
     zsh-autosuggestions
     command-time
     docker
-    kubectl
 )
 
 source $ZSH/oh-my-zsh.sh
-
-# Aliases
-# For a full list of active aliases, run `alias`.
-
-# SSH
-
-alias ssh_pi="ssh pi@raspberrypi.local"
-
-# KOPS (kubernetes) config
-export KOPS_BUCKET_NAME=trucknet-kops-state-store
-export KOPS_CLUSTER_NAME=k8s-staging.trucknet.io
-export KOPS_STATE_STORE=s3://${KOPS_BUCKET_NAME}
-
 source "$HOME/.dotfiles/source.sh"

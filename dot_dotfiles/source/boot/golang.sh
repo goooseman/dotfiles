@@ -1,1 +1,0 @@
-export GOPATH="$HOME/.golang:$PATH"
