@@ -4,6 +4,7 @@
     - common/fnm
     - ubuntu/apt
     - ubuntu/zsh
+    - common/robo3t
 
 - hosts: all
   vars:
