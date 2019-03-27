@@ -1,0 +1,35 @@
+- name: assert supported distribution
+  assert:
+    that:
+      - "ansible_pkg_mgr in ('apt', 'homebrew')"
+
+- name: Kubectl apt repository key
+  apt_key:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+  become_user: root
+  become: yes
+  when: ansible_pkg_mgr == 'apt'
+
+- name: Kubectl apt repository
+  apt_repository:
+    repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
+    state: present
+  become_user: root
+  become: yes
+  when: ansible_pkg_mgr == 'apt'
+
+- name: Install a list of packages
+  apt:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - kubectl
+  become_user: root
+  become: yes
+  when: ansible_pkg_mgr == 'apt'
+
+- name: Install using brew
+  homebrew:
+    name: kubectl
+    state: present
+  when: ansible_pkg_mgr == 'homebrew'

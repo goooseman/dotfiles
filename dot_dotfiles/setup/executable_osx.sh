@@ -15,8 +15,8 @@ fi
 if [ -z "$1" ];
 then
     : # $1 was not given
-    ansible-playbook -i "localhost," -c local --become-method=su osx.yml
+    ansible-playbook -i "localhost," -c local --become-method=su $HOME/.dotfiles/setup/osx.yml
 else
     : # $1 was given
-    ansible-playbook -i "localhost," -c local --become-method=su osx.yml --start-at-task "$1"
+    ansible-playbook -i "localhost," -c local --become-method=su $HOME/.dotfiles/setup/osx.yml --start-at-task "$1"
 fi

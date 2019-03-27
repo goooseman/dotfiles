@@ -1,3 +1,8 @@
+# goooseman staff
+- hosts: all
+  roles:
+    - common/kubectl
+
 - hosts: all
   roles:
     - common/chezmoi
