@@ -48,5 +48,4 @@ This project consists of two parts:
 
 Current features are still **WIP**, help will be appreciated:
 - Android emulators set up (right now I can not start them from cli using `emu-android-nexus-5` alias)
-- Android studio on mac
 - Android SDK on mac

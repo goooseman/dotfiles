@@ -11,25 +11,28 @@
     - common/fnm
     - common/robo3t
     - common/reactotron
+- hosts: all
+  tasks:
+    - name: install homebrew casks apps
+      homebrew_cask:
+        name:
+          - postman
+          - sublime-text
+          - sublime-merge
+          - docker
+          - android-studio
+        state: present
 
-- name: install homebrew casks apps
-  homebrew_cask:
-    name: {{ item }}
-    state: present
-  with_items:
-    - postman
-    - sublime-text
-    - sublime-merge
-    - docker
+- hosts: all
+  tasks:
+    - name: install homebrew packages
+      homebrew:
+        name:
+          - git-flow-avh
+          - micro
+          - wifi-password
+        state: present
 
-- name: install homebrew packages
-  homebrew:
-    name: {{ item }}
-    state: present
-  with_items:
-    - git-flow-avh
-    - micro
-    - wifi-password
 
 - hosts: all
   roles:
