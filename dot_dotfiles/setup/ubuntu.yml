@@ -8,6 +8,10 @@
     - common/reactotron
 
 - hosts: all
+  roles:
+     - role: gantsign.postman
+
+- hosts: all
   vars:
     inotify_max_user_watches: 524288
   roles:

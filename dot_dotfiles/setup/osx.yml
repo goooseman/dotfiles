@@ -4,3 +4,10 @@
     - common/fnm
     - common/robo3t
     - common/reactotron
+
+- name: install reactotron using homebrew cask
+  homebrew_cask:
+    name: {{ item }}
+    state: present
+  with_items:
+    - postman
