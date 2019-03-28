@@ -25,7 +25,10 @@ This project consists of two parts:
     - 💻 [Robo 3T](https://robomongo.org/) - MongoDB explorer tool
     - 💻 [Reactotron](https://github.com/infinitered/reactotron) - inspector for React Native projects.
     - 💻 [Postman](https://www.getpostman.com/) - API development and testing tool.
-    - ⌨️ [Android SDK](https://developer.android.com/studio/releases/sdk-tools) - mandatory SDK for `react-native` development. Includes `adb`, `android`, `emulator` cli tools.
+    - ⌨️ [Android SDK](https://developer.android.com/studio/releases/sdk-tools) - mandatory SDK for `react-native` development. Includes `adb`, `android`, `emulator` cli tools. Following emulators are set up:
+        - Nexus 5
+        - Nexus 7
+        - Nexus 10
     - 💻 [Android Studio](https://developer.android.com/studio) - development IDE for Android developers (needed for `react-native` development).
     - ⌨️ [Docker](https://www.docker.com/) - application containerization.
     - ⌨️ [git-flow-avh](https://github.com/petervanderdoes/gitflow-avh) - git extension to work with [Git Flow](https://danielkummer.github.io/git-flow-cheatsheet/) branching model easily.
