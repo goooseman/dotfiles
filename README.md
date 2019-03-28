@@ -43,3 +43,10 @@ This project consists of two parts:
   - 💻 For GUI tools (can be launched using Applications)
   - ⌨️ For CLI tools (can be launched in the Terminal)
   - 🔤 For fonts
+
+## WIP
+
+Current features are still **WIP**, help will be appreciated:
+- Android emulators set up (right now I can not start them from cli using `emu-android-nexus-5` alias)
+- Android studio on mac
+- Android SDK on mac
