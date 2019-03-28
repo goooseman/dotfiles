@@ -1,0 +1,21 @@
+- name: Copy .deb package
+  copy:
+    src: ../assets/reactotron-app_2.8.0_amd64.deb
+    dest: /tmp/reactotron.deb
+  when: ansible_distribution != 'MacOSX'
+
+- name: install reactotron .deb using dpkg
+  apt:
+    deb: '{{ item }}'
+    state: present
+  become_user: root
+  become: yes
+  with_items:
+    - /tmp/reactotron.deb
+  when: ansible_distribution != 'MacOSX'
+
+- name: install reactotron using homebrew cask
+  homebrew_cask:
+    name: reactotron
+    state: present
+  when: ansible_distribution == 'MacOSX'
