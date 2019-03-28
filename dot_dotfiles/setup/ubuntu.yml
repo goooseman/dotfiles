@@ -11,6 +11,7 @@
     - ubuntu/apt
     - ubuntu/zsh
     - common/robo3t
+    - common/reactotron
 
 - hosts: all
   vars:

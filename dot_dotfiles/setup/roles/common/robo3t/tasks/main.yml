@@ -12,25 +12,22 @@
 
 - name: Download Robo3T archive
   get_url: url=https://download.robomongo.org/1.2.1/linux/robo3t-1.2.1-linux-x86_64-3e50a65.tar.gz dest=/tmp/robo3t.tar.gz
-  when: robo3t_folder.stat.exists == False
-  when: ansible_distribution != 'MacOSX'
+  when: ansible_distribution != 'MacOSX' and robo3t_folder.stat.exists == False
 
 - name: Extract robo3t tools
   unarchive:
     src: /tmp/robo3t.tar.gz
     dest: /opt/robo3t
     extra_opts: [--strip-components=1]
-  when: robo3t_folder.stat.exists == False
   become_user: root
   become: yes
-  when: ansible_distribution != 'MacOSX'
+  when: ansible_distribution != 'MacOSX' and robo3t_folder.stat.exists == False
 
 - name: Change permissions on folder
   file: path=/opt/robo3t recurse=yes mode=0777
-  when: robo3t_folder.stat.exists == False
   become_user: root
   become: yes
-  when: ansible_distribution != 'MacOSX'
+  when: ansible_distribution != 'MacOSX' and robo3t_folder.stat.exists == False
 
 - name: Copy icon
   copy:
@@ -61,6 +58,6 @@
 
 - name: Install robo3t on mac
   homebrew_cask:
-    name: robo3t
+    name: robo-3t
     state: present
   when: ansible_distribution == 'MacOSX'
