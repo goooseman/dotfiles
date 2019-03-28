@@ -6,6 +6,10 @@ which brew > /dev/null || ruby -e "$(curl -fsSL https://raw.githubusercontent.co
 # Install Ansible, if not already installed
 which ansible-playbook > /dev/null || brew install ansible
 
+# Install requirements
+
+ansible-galaxy install -r $HOME/.dotfiles/setup/osx_requirements.yml
+
 # Provision machine with ansible
 
 if [ ! -d "~/.oh-my-zsh" ]; then

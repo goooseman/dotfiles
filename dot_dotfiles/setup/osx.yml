@@ -11,3 +11,39 @@
     - common/fnm
     - common/robo3t
     - common/reactotron
+
+- name: install homebrew casks apps
+  homebrew_cask:
+    name: {{ item }}
+    state: present
+  with_items:
+    - postman
+    - sublime-text
+    - sublime-merge
+    - docker
+
+- name: install homebrew packages
+  homebrew:
+    name: {{ item }}
+    state: present
+  with_items:
+    - git-flow-avh
+    - micro
+    - wifi-password
+
+- hosts: all
+  roles:
+    - role: gantsign.visual-studio-code
+      users:
+        - username: "{{ ansible_env.USER }}"
+          visual_studio_code_extensions:
+            - eamodio.gitlens
+            - dbaeumer.vscode-eslint
+            - ms-vscode.vscode-typescript-tslint-plugin
+            - esbenp.prettier-vscode
+          visual_studio_code_settings: {
+            "editor.rulers": [80, 100, 120],
+            "workbench.editor.enablePreview": false,
+            "editor.fontFamily": "Fira Code",
+            "editor.fontLigatures": true,
+          }
