@@ -61,6 +61,6 @@
 
 - name: Install robo3t on mac
   homebrew_cask:
-    name: robo3t
+    name: robo-3t
     state: present
   when: ansible_distribution == 'MacOSX'
