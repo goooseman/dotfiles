@@ -2,6 +2,8 @@
   shell: add-apt-repository universe
   become_user: root
   become: yes
+  register: command_result
+  changed_when: command_result.stdout is not search("is already enabled")
 
 - name: Sublime apt repository key
   apt_key:
@@ -25,6 +27,7 @@
 - name: Get ubuntu release name
   command: /usr/bin/lsb_release -u -cs
   register: lsb_release
+  changed_when: False
 
 - name: Docker apt repository
   apt_repository:
