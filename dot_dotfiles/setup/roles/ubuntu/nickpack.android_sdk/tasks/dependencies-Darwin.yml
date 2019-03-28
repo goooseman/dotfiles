@@ -1,5 +1,0 @@
----
- - name: Install dependencies (Darwin)
-   homebrew_cask: name={{item}} update_homebrew=yes state=present
-   with_items:
-     - android-sdk
