@@ -13,6 +13,7 @@
           - sublime-text
           - sublime-merge
           - docker
+          - android-studio
         state: present
 
 - hosts: all
