@@ -25,6 +25,7 @@
 - name: Get ubuntu release name
   command: /usr/bin/lsb_release -u -cs
   register: lsb_release
+  changed_when: False
 
 - name: Docker apt repository
   apt_repository:
