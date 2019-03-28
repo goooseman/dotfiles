@@ -2,6 +2,8 @@
   shell: add-apt-repository universe
   become_user: root
   become: yes
+  register: command_result
+  changed_when: command_result.stdout is not search("is already enabled")
 
 - name: Sublime apt repository key
   apt_key:
