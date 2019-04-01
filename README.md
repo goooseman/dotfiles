@@ -25,10 +25,6 @@ This project consists of two parts:
     - 💻 [Robo 3T](https://robomongo.org/) - MongoDB explorer tool
     - 💻 [Reactotron](https://github.com/infinitered/reactotron) - inspector for React Native projects.
     - 💻 [Postman](https://www.getpostman.com/) - API development and testing tool.
-    - ⌨️ [Android SDK](https://developer.android.com/studio/releases/sdk-tools) - mandatory SDK for `react-native` development. Includes `adb`, `android`, `emulator` cli tools. Following emulators are set up:
-        - Nexus 5
-        - Nexus 7
-        - Nexus 10
     - 💻 [Android Studio](https://developer.android.com/studio) - development IDE for Android developers (needed for `react-native` development).
     - ⌨️ [Docker](https://www.docker.com/) - application containerization.
     - ⌨️ [git-flow-avh](https://github.com/petervanderdoes/gitflow-avh) - git extension to work with [Git Flow](https://danielkummer.github.io/git-flow-cheatsheet/) branching model easily.
@@ -44,8 +40,28 @@ This project consists of two parts:
   - ⌨️ For CLI tools (can be launched in the Terminal)
   - 🔤 For fonts
 
+## Installation
+
+1. Install [chezmoi](https://github.com/twpayne/chezmoi)
+  - On Mac OS:
+    - `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
+    - `brew install twpayne/taps/chezmoi`
+  - On Ubuntu:
+    - `wget https://github.com/twpayne/chezmoi/releases/download/v1.4.1/chezmoi_1.4.1-527_linux_amd64.deb`
+    - `dpkg -i chezmoi_1.4.1-527_linux_amd64.deb`
+2. Init dotfiles
+  - `chezmoi init --apply https://github.com/goooseman/dotfiles.git`
+3. If you want to set up your computer automatically
+  - On Mac:
+    - `~/.dotfiles/setup/osx.sh`
+  - On Ubuntu
+    - `~/.dotfiles/setup/ubuntu.sh`
+
 ## WIP
 
 Current features are still **WIP**, help will be appreciated:
-- Android emulators set up (right now I can not start them from cli using `emu-android-nexus-5` alias)
-- Android SDK on mac
+- ⌨️ [Android SDK](https://developer.android.com/studio/releases/sdk-tools) - mandatory SDK for `react-native` development. Includes `adb`, `android`, `emulator` cli tools. 
+- Android emulators automatic set up:
+  - Nexus 5
+  - Nexus 7
+  - Nexus 10
