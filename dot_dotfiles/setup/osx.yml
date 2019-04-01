@@ -43,21 +43,3 @@
             "editor.fontFamily": "Fira Code",
             "editor.fontLigatures": true,
           }
-
-- hosts: all
-# https://facebook.github.io/react-native/docs/0.58/getting-started.html
-  vars:
-    android_sdk_tools_to_install:
-      - build-tools
-      - platform-tools
-      - tools
-      - extra-android-support
-      - extra-emulator
-      - extra-android-m2repository
-      - extra-google-m2repository
-      - sys-img-x86_64-google_apis-28
-    android_sdks_to_install:
-      - android-28
-      - android-27
-  roles:
-    - common/nickpack.android_sdk
