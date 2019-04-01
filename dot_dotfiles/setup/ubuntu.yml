@@ -57,7 +57,6 @@
       - android-27
   roles:
     - common/nickpack.android_sdk
-    - ubuntu/android-emulator
 
 - hosts: all
   vars:

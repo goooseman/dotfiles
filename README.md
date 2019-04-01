@@ -44,6 +44,23 @@ This project consists of two parts:
   - ⌨️ For CLI tools (can be launched in the Terminal)
   - 🔤 For fonts
 
+## Installation
+
+1. Install [chezmoi](https://github.com/twpayne/chezmoi)
+  - On Mac OS:
+    - `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
+    - `brew install twpayne/taps/chezmoi`
+  - On Ubuntu:
+    - `wget https://github.com/twpayne/chezmoi/releases/download/v1.4.1/chezmoi_1.4.1-527_linux_amd64.deb`
+    - `dpkg -i chezmoi_1.4.1-527_linux_amd64.deb`
+2. Init dotfiles
+  - `chezmoi init --apply https://github.com/goooseman/dotfiles.git`
+3. If you want to set up your computer automatically
+  - On Mac:
+    - `~/.dotfiles/setup/osx.sh`
+  - On Ubuntu
+    - `~/.dotfiles/setup/ubuntu.sh`
+
 ## WIP
 
 Current features are still **WIP**, help will be appreciated:
