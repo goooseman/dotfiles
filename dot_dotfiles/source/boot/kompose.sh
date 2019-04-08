@@ -1,0 +1,1 @@
+source <(kompose completion zsh)
