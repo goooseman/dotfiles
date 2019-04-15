@@ -56,6 +56,9 @@ This project consists of two parts:
     - `~/.dotfiles/setup/osx.sh`
   - On Ubuntu
     - `~/.dotfiles/setup/ubuntu.sh`
+4. Install `node` using [fnm](https://github.com/Schniz/fnm):
+  - `fnm install 10.14`
+  - `fnm use 10.14`
 
 ## WIP
 
