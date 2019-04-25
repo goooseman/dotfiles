@@ -1,0 +1,70 @@
+#!/bin/bash
+
+# ambr 'npm i' 'npm ci'
+
+display_usage() { 
+	echo -e "\nUsage:\nupdate-json [json_key] [value] [glob]\nExample:\nupdate-json '[\"engines\", \"npm\"]' '~6.9.0' */package.json" 
+} 
+
+if [  $# -le 1 ] 
+then 
+	display_usage
+	exit 1
+fi
+
+if [[ ( $# == "--help") ||  $# == "-h" ]] 
+then 
+	display_usage
+	exit 0
+fi 
+
+initial_pwd=$(pwd)
+
+for f in "$@"
+do
+  [ -e "$f" ] || continue
+  echo "Processing $f"
+  if [ $(jq --argjson KEY "$1"  'getpath($KEY)' $f) == "null" ]
+  then
+    continue
+  fi
+  echo "File $f contain the value... Updating..."
+  echo "File $f will look like this:"
+  updated_json=$(jq --argjson KEY "$1" --arg VALUE "$2" 'setpath($KEY; $VALUE)' $f)
+  echo -e $updated_json | jq .
+  read -r -p "The file will be updated, commited to develop and pushed. Are you sure? [y/N]" response
+  if [[ "$response" =~ ^([yY][eE][sS]|[yY])+$ ]]
+  then
+    echo "Updating the file"
+  else
+    continue
+  fi
+  cd $(dirname $f)
+  filename=$(basename $f)
+  echo "Switching to develop"
+  git checkout develop
+  echo "Updating json file"
+  tmp=$(mktemp)
+  echo $updated_json | jq . > "$tmp"
+  mv "$tmp" "$filename"
+  echo "File updated"
+  echo "Doing npm install"
+  npm install
+  rm .tmp*
+  echo "git diff:"
+  git diff | cat
+  read -r -p "Are you sure to commit and push? [y/N]" response
+  if [[ "$response" =~ ^([yY][eE][sS]|[yY])+$ ]]
+  then
+    echo "Adding, commiting, pushing..."
+  else
+    cd $initial_pwd
+    continue
+  fi
+  echo "Adding file to git"
+  git add .
+  echo "Doing a commit"
+  git commit -m "chore($f): updated $1 to $2 in $filename"
+  git push
+  cd $initial_pwd
+done
