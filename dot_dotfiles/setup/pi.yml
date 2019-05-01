@@ -10,10 +10,10 @@
     - name: Turn off ssh by password auth
       lineinfile:
         destfile: /etc/ssh/sshd_config
-        regexp: '^PasswordAuthentication.*no'
-        line: 'PasswordAuthentication yes'
+        regexp: '^PasswordAuthentication'
+        line: 'PasswordAuthentication no'
     - name: Turn off ssh for root user
       lineinfile:
         destfile: /etc/ssh/sshd_config
-        regexp: '^PermitRootLogin.*yes'
+        regexp: '^PermitRootLogin'
         line: 'PermitRootLogin no'
