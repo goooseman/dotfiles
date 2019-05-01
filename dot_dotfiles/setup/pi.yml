@@ -1,14 +1,18 @@
----
+- hosts: all
+  roles:
+    - common/chezmoi
+    - ubuntu/zsh
+
 - hosts: all
   tasks:
     - name: Turn off ssh by password auth
       lineinfile:
-        path: /etc/ssh/sshd_config
+        destfile: /etc/ssh/sshd_config
         regexp: '^PasswordAuthentication.*no'
         line: 'PasswordAuthentication yes'
     - name: Turn off ssh for root user
       lineinfile:
-        path: /etc/ssh/sshd_config
+        destfile: /etc/ssh/sshd_config
         regexp: '^PermitRootLogin.*yes'
         line: 'PermitRootLogin no'
     - name: Install a list of packages
