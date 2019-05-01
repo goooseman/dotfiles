@@ -4,6 +4,8 @@
     - ubuntu/zsh
 
 - hosts: all
+  become: yes
+  become_user: root
   tasks:
     - name: Turn off ssh by password auth
       lineinfile:
@@ -15,9 +17,3 @@
         destfile: /etc/ssh/sshd_config
         regexp: '^PermitRootLogin.*yes'
         line: 'PermitRootLogin no'
-    - name: Install a list of packages
-      apt:
-        name: "{{ packages }}"
-      vars:
-        packages:
-        - qbittorrent-nox
