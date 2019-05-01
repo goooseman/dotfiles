@@ -4,14 +4,14 @@
   become_user: root
   become: yes
 
-- name: Get ubuntu release name
-  command: (/usr/bin/lsb_release -u -cs || /usr/bin/lsb_release -cs) 2> /dev/null
+- name: Get debian release name
+  command: /usr/bin/lsb_release -cs
   register: lsb_release
   changed_when: False
 
 - name: Docker apt repository
   apt_repository:
-    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ lsb_release.stdout }} stable
+    repo: deb [arch=armhf] https://download.docker.com/linux/debian {{ lsb_release.stdout }} stable
     state: present
   become_user: root
   become: yes

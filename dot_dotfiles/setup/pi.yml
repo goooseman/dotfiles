@@ -2,7 +2,7 @@
   roles:
     - common/chezmoi
     - ubuntu/zsh
-    - ubuntu/docker
+    - pi/docker
 
 - hosts: all
   become: yes
