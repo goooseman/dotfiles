@@ -36,6 +36,20 @@
   become_user: root
   become: yes
 
+- name: Etcher apt repository key
+  apt_key:
+    keyserver: keyserver.ubuntu.com
+    id: 379CE192D401AB61
+  become_user: root
+  become: yes
+
+- name: Etcher apt repository
+  apt_repository:
+    repo: deb https://deb.etcher.io stable etcher
+    state: present
+  become_user: root
+  become: yes
+
 - name: Install a list of packages
   apt:
     name: "{{ packages }}"
@@ -50,5 +64,6 @@
     - docker-ce-cli
     - containerd.io
     - xclip # For micro
+    - balena-etcher-electron
   become_user: root
   become: yes
