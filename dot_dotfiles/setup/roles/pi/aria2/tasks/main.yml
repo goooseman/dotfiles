@@ -24,6 +24,7 @@
     repo: git@github.com:oooseman/webui-aria2.git
     version: patch-1
     dest: /tmp/webui-aria2/
+    accept_hostkey: true
 
 - name: Build aria2 docker image
   docker_image:
