@@ -31,6 +31,7 @@
   docker_image:
     path: /tmp/webui-aria2/
     name: goooseman/webui-aria2
+    dockerfile: Dockerfile.arm32v7
     tag: arm32v7
   when: is_build.stdout == ""
   become: yes
