@@ -27,7 +27,7 @@
 
 - name: Build aria2 docker image
   docker_image:
-    path: /tmp/webui-aria2/Dockerfile
+    path: /tmp/webui-aria2/
     name: goooseman/webui-aria2
     tag: latest
   when: not check_result | bool
