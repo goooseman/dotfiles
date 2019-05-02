@@ -27,6 +27,11 @@
   become_user: root
   become: yes
 
+- name: Install pip
+  easy_install:
+    name: pip
+    state: latest
+
 - name: Install docker-py pip package
   pip:
     name: docker-py
