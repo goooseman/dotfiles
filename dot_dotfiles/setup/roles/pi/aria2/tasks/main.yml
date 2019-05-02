@@ -7,7 +7,7 @@
 
 - name: Check local webui-aria2 image
   shell: docker images 'goooseman/webui-aria2:arm32v7' | grep 'webui-aria2'
-  register: check_result
+  register: is_build
   become: yes
   become_user: root
   ignore_errors: true
@@ -16,10 +16,10 @@
   file:
     path: /tmp/webui-aria2/
     state: directory
-  when: not check_result | bool
+  when: is_build.stdout == ""
 
 - name: Download webui-aria2 Dockerfile
-  when: not check_result | bool
+  when: is_build.stdout == ""
   git:
     repo: https://github.com/goooseman/webui-aria2.git
     version: patch-1
@@ -31,7 +31,7 @@
     path: /tmp/webui-aria2/
     name: goooseman/webui-aria2
     tag: arm32v7
-  when: not check_result | bool
+  when: is_build.stdout == ""
   become: yes
   become_user: root
 
@@ -43,12 +43,12 @@
 - name: Ensures /home/pi/.aria2/session.txt file exists
   file:
     path: /home/pi/.aria2/session.txt
-    state: file
+    state: touch
 
 - name: Ensures /home/pi/.aria2/aria2.log file exists
   file:
     path: /home/pi/.aria2/aria2.log
-    state: file
+    state: touch
 
 - name: Copy aria2 conf file
   copy:
