@@ -20,15 +20,15 @@
   when: fnm_folder.stat.exists == False
 
 - name: Check if 10.14 is installed
-  shell: "fnm ls | grep '10.14'"
+  shell: "$HOME/.fnm/fnm ls | grep '10.14'"
   register: is_installed
   ignore_errors: true
   changed_when: no
 
 - name: Install node 10.14
-  command: fnm install 10.14
+  shell: $HOME/.fnm/fnm install 10.14
   when: is_installed.stdout == ""
 
 - name: Use node 10.14
-  command: fnm use 10.14
+  shell: $HOME/.fnm/fnm use 10.14
   when: is_installed.stdout == ""
