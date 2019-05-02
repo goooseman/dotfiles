@@ -87,3 +87,7 @@ This project contains my configuration of raspberry pi headless media server inc
 1. `sudo connectd_installer`
 1. Reboot `sudo reboot`
 
+
+### TODO
+
+- [Plex](https://github.com/jaymoulin/docker-plex)
