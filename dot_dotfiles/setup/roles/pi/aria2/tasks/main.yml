@@ -1,6 +1,8 @@
 - name: Check local webui-aria2 image
   shell: docker images 'goooseman/webui-aria2:latest' | grep 'webui-aria2'
   register: check_result
+  become: yes
+  become_user: root
 
 - name: Ensures /tmp/webui-aria2/ dir exists
   file:
@@ -21,6 +23,8 @@
     name: goooseman/webui-aria2
     tag: latest
   when: not check_result | bool
+  become: yes
+  become_user: root
 
 - name: Ensures /home/pi/.aria2/session.txt file exists
   file:
