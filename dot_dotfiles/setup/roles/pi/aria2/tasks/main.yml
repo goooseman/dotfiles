@@ -1,6 +1,5 @@
 - name: Check local webui-aria2 image
-  command: >
-    docker images 'goooseman/webui-aria2:latest' | grep 'webui-aria2'
+  command: (docker images 'goooseman/webui-aria2:latest' | grep 'webui-aria2')
   register: check_result
 
 - name: Ensures /tmp/webui-aria2/ dir exists
