@@ -69,3 +69,5 @@
       - "6800:6800"
       - "3001:8080"
     restart_policy: always
+  become: yes
+  become_user: root
