@@ -1,0 +1,39 @@
+- name: Check local webui-aria2 image
+  command: >
+    docker images 'goooseman/webui-aria2:latest' | grep 'webui-aria2'
+  register: check_result
+
+- name: Ensures /tmp/webui-aria2/ dir exists
+  file:
+    path: /tmp/webui-aria2/
+    state: directory
+  when: not check_result | bool
+
+- name: Download aria2 Dockerfile
+  get_url:
+    url: https://raw.githubusercontent.com/ziahamza/webui-aria2/master/Dockerfile.arm32v7
+    dest: /tmp/webui-aria2/Dockerfile
+    mode: 0440
+  when: not check_result | bool
+
+- name: Build aria2 docker image
+  docker_image:
+    path: /tmp/webui-aria2/Dockerfile
+    name: goooseman/webui-aria2
+    tag: latest
+  when: not check_result | bool
+
+- name: Ensures /home/pi/.aria2/session.txt file exists
+  file:
+    path: /home/pi/.aria2/session.txt
+    state: file
+
+- name: Ensures /home/pi/.aria2/aria2.log file exists
+  file:
+    path: /home/pi/.aria2/aria2.log
+    state: file
+
+- name: Copy aria2 conf file
+  copy:
+    src: ../assets/aria2.conf
+    dest: /home/pi/.aria2/aria2.conf
