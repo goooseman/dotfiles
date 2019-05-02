@@ -18,12 +18,12 @@
     state: directory
   when: not check_result | bool
 
-- name: Download aria2 Dockerfile
-  get_url:
-    url: https://raw.githubusercontent.com/ziahamza/webui-aria2/master/Dockerfile.arm32v7
-    dest: /tmp/webui-aria2/Dockerfile
-    mode: 0440
+- name: Download webui-aria2 Dockerfile
   when: not check_result | bool
+  git:
+    repo: git@github.com:oooseman/webui-aria2.git
+    version: patch-1
+    dest: /tmp/webui-aria2/
 
 - name: Build aria2 docker image
   docker_image:
