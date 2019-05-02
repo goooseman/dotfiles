@@ -26,3 +26,7 @@
     - containerd.io
   become_user: root
   become: yes
+
+- name: Install docker-py pip package
+  pip:
+    name: docker-py
