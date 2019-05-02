@@ -3,6 +3,7 @@
     - common/chezmoi
     - ubuntu/zsh
     - pi/docker
+    - pi/aria2
 
 - hosts: all
   become: yes
