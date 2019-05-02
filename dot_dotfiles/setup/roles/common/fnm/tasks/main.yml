@@ -20,7 +20,7 @@
   when: fnm_folder.stat.exists == False
 
 - name: Check if 10.14 is installed
-  shell: "fnm ls | grep -ir '10.14'"
+  shell: "fnm ls | grep '10.14'"
   register: is_installed
   ignore_errors: true
   changed_when: no
