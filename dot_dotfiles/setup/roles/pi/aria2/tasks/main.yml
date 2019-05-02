@@ -35,6 +35,11 @@
   become: yes
   become_user: root
 
+- name: Ensures /home/pi/.aria2/ dir exists
+  file:
+    path: /home/pi/.aria2/
+    state: directory
+
 - name: Ensures /home/pi/.aria2/session.txt file exists
   file:
     path: /home/pi/.aria2/session.txt
