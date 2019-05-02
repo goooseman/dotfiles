@@ -85,3 +85,5 @@ This project contains my configuration of raspberry pi headless media server inc
   - `ssh-copy-id -i ~/.ssh/pi.pub -o PubkeyAuthentication=no pi@raspberrypi.local`
 1. Run setup script: `~/.dotfiles/setup/pi.sh`
 1. Reboot `sudo reboot`
+1. `sudo connectd_installer`
+

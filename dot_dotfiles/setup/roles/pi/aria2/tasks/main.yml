@@ -50,7 +50,7 @@
     path: /home/pi/.aria2/aria2.log
     state: touch
 
-- name: Copy aria2 conf file
+- name: Copy aria2 conf file 
   copy:
     src: ../assets/aria2.conf
     dest: /home/pi/.aria2/aria2.conf

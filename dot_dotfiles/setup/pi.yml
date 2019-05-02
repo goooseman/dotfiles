@@ -19,3 +19,13 @@
         destfile: /etc/ssh/sshd_config
         regexp: '^PermitRootLogin'
         line: 'PermitRootLogin no'
+
+- name: Install a list of packages
+  apt:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - connectd
+    - usbmount
+  become_user: root
+  become: yes
