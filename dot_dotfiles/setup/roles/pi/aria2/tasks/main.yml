@@ -11,6 +11,7 @@
   become: yes
   become_user: root
   ignore_errors: true
+  changed_when: no
 
 - name: Ensures /tmp/webui-aria2/ dir exists
   file:
@@ -41,16 +42,30 @@
     state: directory
 
 - name: Ensures /home/pi/.aria2/session.txt file exists
-  file:
-    path: /home/pi/.aria2/session.txt
-    state: touch
+  copy:
+    content: ""
+    dest: /home/pi/.aria2/session.txt
+    force: no
 
 - name: Ensures /home/pi/.aria2/aria2.log file exists
-  file:
-    path: /home/pi/.aria2/aria2.log
-    state: touch
+  copy:
+    content: ""
+    dest: /home/pi/.aria2/session.txt
+    force: no
 
 - name: Copy aria2 conf file 
   copy:
     src: ../assets/aria2.conf
     dest: /home/pi/.aria2/aria2.conf
+
+- name: Create a aria2 container
+  docker_container:
+    name: webui-aria2
+    image: goooseman/webui-aria2:arm32v7
+    volumes:
+      - /home/pi/.aria2:/home/aria/.aria2
+      - /media/usb:/data/downloads
+    ports:
+      - "6800:6800"
+      - "3001:8080"
+    restart_policy: always
