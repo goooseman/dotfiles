@@ -28,3 +28,8 @@
         - usbmount
       become_user: root
       become: yes
+    - name: Enable shared MountFlags so usbmount will work
+      lineinfile:
+        destfile: /lib/systemd/system/systemd-udevd.service
+        regexp: '^MountFlags'
+        line: 'MountFlags=shared'
