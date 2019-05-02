@@ -5,7 +5,7 @@
   become: yes
 
 - name: Get ubuntu release name
-  command: (/usr/bin/lsb_release -u -cs || /usr/bin/lsb_release -cs) 2> /dev/null
+  shell: (/usr/bin/lsb_release -u -cs || /usr/bin/lsb_release -cs) 2> /dev/null
   register: lsb_release
   changed_when: False
 
