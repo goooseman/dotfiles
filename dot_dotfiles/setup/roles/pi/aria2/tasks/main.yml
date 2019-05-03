@@ -68,7 +68,21 @@
       - /media/usb:/data/downloads
     ports:
       - "6800:6800"
-      - "3001:8080"
+    env:
+      VIRTUAL_HOST: aria2.raspberrypi.local
+      VIRTUAL_PORT: 8080
+    restart_policy: always
+  become: yes
+  become_user: root
+
+- name: Create a nginx container
+  docker_container:
+    name: nginx
+    image: jwilder/nginx-proxy
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    ports:
+      - "80:80"
     restart_policy: always
   become: yes
   become_user: root
