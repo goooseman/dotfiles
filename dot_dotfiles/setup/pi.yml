@@ -2,9 +2,9 @@
   roles:
     - common/chezmoi
     - ubuntu/zsh
-    - pi/plex
     - pi/docker
     - pi/aria2
+    - pi/plex
 
 - hosts: all
   become: yes

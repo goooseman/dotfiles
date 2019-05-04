@@ -5,6 +5,6 @@ rpc-listen-all=true
 file-allocation=falloc
 continue
 dir=/data/downloads/Media
-{{- if (index . "aria2") }
+{{- if (index . "aria2") }}
 rpc-secret={{ .aria2.secret }}
 {{- end }}
