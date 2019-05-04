@@ -52,19 +52,25 @@
     src: /var/lib/plexmediaserver/Library/Application Support/Plex Media Server
     dest: /media/usb/plex
   when: plex_folder_exists.stat.isdir is defined and plex_folder_exists.stat.isdir
+  become_user: plex
+  become: yes
 
 - name: Remove the folder
   file:
     path: /var/lib/plexmediaserver/Library/Application Support/Plex Media Server
     state: absent 
   when: plex_folder_exists.stat.isdir is defined and plex_folder_exists.stat.isdir
+  become_user: plex
+  become: yes
 
 - name: Create a symlink of Plex folder to HDD
   file:
     src: /var/lib/plexmediaserver/Library/Application Support/Plex Media Server 
     dest: /media/usb/Plex
     state: link
-
+  become_user: plex
+  become: yes
+  
 - include: webtools.yml
 - include: trakt.yml
 - include: kinopub.yml
