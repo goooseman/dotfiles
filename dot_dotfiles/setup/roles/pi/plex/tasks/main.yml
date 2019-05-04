@@ -50,9 +50,9 @@
 - name: Copy the folder
   copy:
     src: /var/lib/plexmediaserver/Library/Application Support/Plex Media Server
-    dest: /media/usb/plex
+    dest: /media/usb/Plex
   when: plex_folder_exists.stat.isdir is defined and plex_folder_exists.stat.isdir
-  become_user: root
+  become_user: plex
   become: yes
 
 - name: Remove the folder
@@ -60,7 +60,7 @@
     path: /var/lib/plexmediaserver/Library/Application Support/Plex Media Server
     state: absent 
   when: plex_folder_exists.stat.isdir is defined and plex_folder_exists.stat.isdir
-  become_user: root
+  become_user: plex
   become: yes
 
 - name: Create a symlink of Plex folder to HDD
