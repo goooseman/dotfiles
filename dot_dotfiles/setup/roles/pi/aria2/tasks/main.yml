@@ -1,3 +1,5 @@
+- include: secret.yml
+
 - name: Pull webui-aria2 image
   docker_image:
     name: goooseman/webui-aria2:arm32v7
