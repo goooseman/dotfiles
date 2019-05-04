@@ -29,6 +29,9 @@
     chezmoi_json: "{{ chezmoi_json | combine({ 'data': {'git': { 'email': git_email.user_input }}})}}"
   when: chezmoi_json.data.git.email is not defined
 
+- debug:
+    var: chezmoi_json
+
 - name: Write chezmoi.json
   copy: 
     content: "{{ chezmoi_updated | to_nice_json }}" 
