@@ -1,0 +1,28 @@
+- name: Check if Kinpub is installed
+  stat:
+    path: /var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Plug-ins/Kinopub.bundle
+  register: folder
+
+- name: Create plugins folder
+  file:
+    path: /var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Plug-ins/
+    state: directory
+
+- name: Download Kinopub
+  get_url: 
+    url: http://plugins.service-kp.com/plex/plex.kino.pub-1.1.4.zip
+    dest: /tmp/kinopub.zip
+  when: folder.stat.exists == False
+
+- name: Unarchive
+  unarchive:
+    src: /tmp/kinopub.zip
+    dest: /var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Plug-ins/
+    remote_src: yes
+  when: folder.stat.exists == False
+
+- name: Restart service plexmediaserver
+  service:
+    name: plexmediaserver
+    state: restarted
+  when: folder.stat.exists == False

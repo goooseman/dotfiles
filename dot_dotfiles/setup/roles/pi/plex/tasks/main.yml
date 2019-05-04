@@ -1,0 +1,68 @@
+- name: Check if plexmediaserver is installed
+  command: dpkg-query -W plexmediaserver
+  register: plexmediaserver_check_deb
+  failed_when: plexmediaserver_check_deb.rc > 1
+  changed_when: plexmediaserver_check_deb.rc == 1
+
+- name: Download plexmediaserver
+  get_url: 
+    url: https://downloads.plex.tv/plex-media-server-new/1.15.4.993-bb4a2cb6c/debian/plexmediaserver_1.15.4.993-bb4a2cb6c_armhf.deb
+    dest: /tmp/plexmediaserver.deb
+  when: plexmediaserver_check_deb.rc == 1
+
+- name: Install plexmediaserver
+  apt:
+    deb: /tmp/plexmediaserver.deb
+  when: plexmediaserver_check_deb.rc == 1
+  become_user: root
+  become: yes
+
+- name: Plex apt repository key
+  apt_key:
+    url: https://downloads.plex.tv/plex-keys/PlexSign.key
+  become_user: root
+  become: yes
+
+- name: Plex apt repository
+  apt_repository:
+    repo: deb https://downloads.plex.tv/repo/deb public main
+    state: present
+  become_user: root
+  become: yes
+
+- name: Upgrade all packages to the latest version
+  apt:
+    name: "*"
+    state: latest
+
+- name: Create a folder on HDD for Plex
+  file:
+    path: /media/usb/Plex
+    state: directory
+
+- name: Check the current settings folder
+  stat:
+    path: /var/lib/plexmediaserver/Library/Application Support/Plex Media Server
+  register: plex_folder_exists
+
+- name: Copy the folder
+  copy:
+    src: /var/lib/plexmediaserver/Library/Application Support/Plex Media Server
+    dest: /media/usb/plex
+  when: plex_folder_exists.stat.isdir is defined and plex_folder_exists.stat.isdir
+
+- name: Remove the folder
+  file:
+    path: /var/lib/plexmediaserver/Library/Application Support/Plex Media Server
+    state: absent 
+  when: plex_folder_exists.stat.isdir is defined and plex_folder_exists.stat.isdir
+
+- name: Create a symlink of Plex folder to HDD
+  file:
+    src: /var/lib/plexmediaserver/Library/Application Support/Plex Media Server 
+    dest: /media/usb/Plex
+    state: link
+
+- include: webtools.yml
+- include: trakt.yml
+- include: kinopub.yml
