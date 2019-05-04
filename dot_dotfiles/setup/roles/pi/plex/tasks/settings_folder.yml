@@ -16,6 +16,7 @@
     dest: /var/lib/plexmediaserver/Library/Application Support/Plex Media Server.backup
   when: plex_folder_exists.stat.isdir is defined and plex_folder_exists.stat.isdir
   become_user: root
+  become_method: sudo
   become: yes
 
 
