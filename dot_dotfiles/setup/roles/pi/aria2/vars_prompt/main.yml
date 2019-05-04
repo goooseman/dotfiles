@@ -1,2 +1,0 @@
-- name: "aria2_secret"
-  prompt: "Aria2 RPC secret"

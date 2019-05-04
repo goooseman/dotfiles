@@ -39,27 +39,7 @@
   become: yes
   become_user: root
 
-- name: Ensures /home/pi/.aria2/ dir exists
-  file:
-    path: /home/pi/.aria2/
-    state: directory
-
-- name: Ensures /home/pi/.aria2/session.txt file exists
-  copy:
-    content: ""
-    dest: /home/pi/.aria2/session.txt
-    force: no
-
-- name: Ensures /home/pi/.aria2/aria2.log file exists
-  copy:
-    content: ""
-    dest: /home/pi/.aria2/session.txt
-    force: no
-
-- name: Copy aria2 conf file 
-  template:
-    src: ../templates/aria2.conf.j2
-    dest: /home/pi/.aria2/aria2.conf
+- include: conf.yml
 
 - name: Create a aria2 container
   docker_container:
