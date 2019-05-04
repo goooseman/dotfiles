@@ -29,7 +29,7 @@
   when: conf_file.stat.exists == False
 
 - set_fact:
-  aria2_secret: "{{prompt.user_input}}"
+    aria2_secret: "{{prompt.user_input}}"
   when: conf_file.stat.exists == False
 
 - name: Copy aria2 conf file 
