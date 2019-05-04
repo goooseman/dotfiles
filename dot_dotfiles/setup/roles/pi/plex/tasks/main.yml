@@ -32,11 +32,11 @@
 
 - name: Upgrade all packages to the latest version
   apt:
-    name: "*"
-    state: latest
+    upgrade: yes
+    update_cache: yes
   become_user: root
   become: yes
-  
+
 - name: Create a folder on HDD for Plex
   file:
     path: /media/usb/Plex
