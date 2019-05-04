@@ -57,8 +57,8 @@
     force: no
 
 - name: Copy aria2 conf file 
-  copy:
-    src: ../assets/aria2.conf
+  template:
+    src: ../templates/aria2.conf.j2
     dest: /home/pi/.aria2/aria2.conf
 
 - name: Create a aria2 container
