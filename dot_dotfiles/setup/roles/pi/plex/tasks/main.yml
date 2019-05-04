@@ -34,7 +34,9 @@
   apt:
     name: "*"
     state: latest
-
+  become_user: root
+  become: yes
+  
 - name: Create a folder on HDD for Plex
   file:
     path: /media/usb/Plex
