@@ -4,7 +4,7 @@
   register: config_File
 
 - pause:
-    prompt: "I need your full name and email address, so git will save this information in every commit you make. What is your full name?"
+    prompt: "I need some informartion, so git will save this information in every commit you make. What is your full name?"
   register: git_name
   when: config_File.stat.exists == False
 
