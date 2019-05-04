@@ -37,40 +37,7 @@
   become_user: root
   become: yes
 
-- name: Create a folder on HDD for Plex
-  file:
-    path: /media/usb/Plex
-    state: directory
-
-- name: Check the current settings folder
-  stat:
-    path: /var/lib/plexmediaserver/Library/Application Support/Plex Media Server
-  register: plex_folder_exists
-
-- name: Copy the folder
-  copy:
-    src: /var/lib/plexmediaserver/Library/Application Support/Plex Media Server
-    dest: /media/usb/Plex
-  when: plex_folder_exists.stat.isdir is defined and plex_folder_exists.stat.isdir
-  become_user: plex
-  become: yes
-
-- name: Remove the folder
-  file:
-    path: /var/lib/plexmediaserver/Library/Application Support/Plex Media Server
-    state: absent 
-  when: plex_folder_exists.stat.isdir is defined and plex_folder_exists.stat.isdir
-  become_user: plex
-  become: yes
-
-- name: Create a symlink of Plex folder to HDD
-  file:
-    src: /var/lib/plexmediaserver/Library/Application Support/Plex Media Server 
-    dest: /media/usb/Plex
-    state: link
-  become_user: plex
-  become: yes
-
+- include: settings_folder.yml
 - include: webtools.yml
 - include: trakt.yml
 - include: kinopub.yml
