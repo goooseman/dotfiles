@@ -1,6 +1,6 @@
 - hosts: all
   roles:
-    - common/chezmoi
+    - common/gitconfig
     - common/fnm
     - common/robo3t
     - common/reactotron
@@ -25,7 +25,6 @@
           - micro
           - wifi-password
         state: present
-
 
 - hosts: all
   roles:

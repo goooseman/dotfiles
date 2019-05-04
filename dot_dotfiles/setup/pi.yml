@@ -1,6 +1,6 @@
 - hosts: all
   roles:
-    - common/chezmoi
+    - common/gitconfig
     - ubuntu/zsh
     - pi/docker
     - pi/aria2

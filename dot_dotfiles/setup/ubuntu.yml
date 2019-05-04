@@ -1,6 +1,6 @@
 - hosts: all
   roles:
-    - common/chezmoi
+    - common/gitconfig
     - common/fnm
     - ubuntu/apt
     - ubuntu/docker

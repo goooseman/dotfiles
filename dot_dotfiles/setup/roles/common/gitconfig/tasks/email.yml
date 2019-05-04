@@ -1,0 +1,18 @@
+- name: Get current git email
+  git_config:
+    name: user.email
+    scope: global
+  register: current_git_email
+
+- name: Ask user for his email to set up git
+  pause:
+    prompt: "What is your git full email (ex. goooseman@me.com)?"
+  register: git_email
+  when: current_git_email.config_value | length == 0
+
+- name: Set git email
+  git_config:
+    name: user.email
+    scope: global
+    value: "{{git_email.user_input}}"
+  when: current_git_email.config_value | length == 0
