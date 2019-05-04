@@ -1,6 +1,5 @@
 - hosts: all
   roles:
-    - common/gitconfig
     - ubuntu/zsh
     - pi/docker
     - pi/aria2
