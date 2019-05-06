@@ -37,7 +37,7 @@
   become_user: root
   become: yes
 
-- include: settings_folder.yml
+# - include: settings_folder.yml
 - include: webtools.yml
 - include: trakt.yml
 - include: kinopub.yml
