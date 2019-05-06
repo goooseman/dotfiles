@@ -19,6 +19,8 @@
     src: /tmp/webtools.zip
     dest: /var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Plug-ins/
     remote_src: yes
+  become_user: plex
+  become: yes
   when: folder.stat.exists == False
 
 - name: Restart service plexmediaserver
