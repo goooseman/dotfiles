@@ -1,0 +1,41 @@
+- name: Docker apt repository key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+  become_user: root
+  become: yes
+
+- name: Get debian release name
+  command: /usr/bin/lsb_release -cs
+  register: lsb_release
+  changed_when: False
+
+- name: Docker apt repository
+  apt_repository:
+    repo: deb [arch=armhf] https://download.docker.com/linux/debian {{ lsb_release.stdout }} stable
+    state: present
+  become_user: root
+  become: yes
+
+- name: Install a list of packages
+  apt:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - docker-ce
+    - docker-ce-cli
+    - containerd.io
+  become_user: root
+  become: yes
+
+- name: Install pip
+  easy_install:
+    name: pip
+    state: present
+  become_user: root
+  become: yes
+
+- name: Install docker-py pip package
+  pip:
+    name: docker-py
+  become_user: root
+  become: yes

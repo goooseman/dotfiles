@@ -1,0 +1,39 @@
+- name: Ensures /home/pi/.aria2/ dir exists
+  file:
+    path: /home/pi/.aria2/
+    state: directory
+
+- name: Ensures /home/pi/.aria2/session.txt file exists
+  copy:
+    content: ""
+    dest: /home/pi/.aria2/session.txt
+    force: no
+
+- name: Ensures /home/pi/.aria2/aria2.log file exists
+  copy:
+    content: ""
+    dest: /home/pi/.aria2/session.txt
+    force: no
+
+- name: Check if aria2 conf exists
+  stat:
+    path: /home/pi/.aria2/aria2.conf
+  register: conf_file
+
+- pause:
+    prompt: "Aria2 RPC token?"
+    echo: no
+  register: prompt
+  no_log: yes
+  run_once: yes
+  when: conf_file.stat.exists == False
+
+- set_fact:
+    aria2_secret: "{{prompt.user_input}}"
+  when: conf_file.stat.exists == False
+
+- name: Copy aria2 conf file 
+  template:
+    src: ../templates/aria2.conf.j2
+    dest: /home/pi/.aria2/aria2.conf
+  when: conf_file.stat.exists == False

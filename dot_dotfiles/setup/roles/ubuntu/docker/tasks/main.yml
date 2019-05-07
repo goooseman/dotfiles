@@ -1,0 +1,28 @@
+- name: Docker apt repository key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+  become_user: root
+  become: yes
+
+- name: Get ubuntu release name
+  shell: (/usr/bin/lsb_release -u -cs || /usr/bin/lsb_release -cs) 2> /dev/null
+  register: lsb_release
+  changed_when: False
+
+- name: Docker apt repository
+  apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ lsb_release.stdout }} stable
+    state: present
+  become_user: root
+  become: yes
+
+- name: Install a list of packages
+  apt:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - docker-ce
+    - docker-ce-cli
+    - containerd.io
+  become_user: root
+  become: yes

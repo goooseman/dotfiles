@@ -47,8 +47,9 @@ This project consists of two parts:
     - `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
     - `brew install twpayne/taps/chezmoi`
   - On Ubuntu:
+    - `sudo apt install git`
     - `wget https://github.com/twpayne/chezmoi/releases/download/v1.4.1/chezmoi_1.4.1-527_linux_amd64.deb`
-    - `dpkg -i chezmoi_1.4.1-527_linux_amd64.deb`
+    - `sudo dpkg -i chezmoi_1.4.1-527_linux_amd64.deb`
 2. Init dotfiles
   - `chezmoi init --apply https://github.com/goooseman/dotfiles.git`
 3. If you want to set up your computer automatically
@@ -65,3 +66,28 @@ Current features are still **WIP**, help will be appreciated:
   - Nexus 5
   - Nexus 7
   - Nexus 10
+
+## Raspberry Pi
+
+This project contains my configuration of raspberry pi headless media server including plex, qbittorrent, aria2 with web interface.
+
+### Setup
+
+1. Download `Raspbian Stretch Lite` image from [official website](https://www.raspberrypi.org/downloads/raspbian/) and burn it to SD card. Create an empty `ssh` or `ssh.txt` file in the boot partition of the sd card.
+1. Boot raspberry, connect with ssh from other computer: `ssh -o PubkeyAuthentication=no pi@raspberrypi.local` (password: `raspberry`)
+1. Change user password: `sudo passwd pi`
+1. Install chezmoi:
+  - `sudo apt-get install git`
+  - `wget https://github.com/twpayne/chezmoi/releases/download/v1.4.2/chezmoi_1.4.2-621_linux_armel.deb`
+  - `sudo dpkg -i chezmoi_1.4.2-621_linux_armel.deb`
+1. Init dotfiles: `chezmoi init --apply https://github.com/goooseman/dotfiles.git`
+1. Generate ssh key to access your Raspberry and copy them (on your local machine):
+  - `ssh-copy-id -i ~/.ssh/pi.pub -o PubkeyAuthentication=no pi@raspberrypi.local`
+1. Run setup script: `~/.dotfiles/setup/pi.sh`
+1. `sudo connectd_installer`
+1. Reboot `sudo reboot`
+
+
+### TODO
+
+- [Plex](https://github.com/jaymoulin/docker-plex)

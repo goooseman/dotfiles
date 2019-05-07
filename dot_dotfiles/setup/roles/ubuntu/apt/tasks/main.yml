@@ -18,24 +18,6 @@
   become_user: root
   become: yes
 
-- name: Docker apt repository key
-  apt_key:
-    url: https://download.docker.com/linux/ubuntu/gpg
-  become_user: root
-  become: yes
-
-- name: Get ubuntu release name
-  command: /usr/bin/lsb_release -u -cs
-  register: lsb_release
-  changed_when: False
-
-- name: Docker apt repository
-  apt_repository:
-    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ lsb_release.stdout }} stable
-    state: present
-  become_user: root
-  become: yes
-
 - name: Etcher apt repository key
   apt_key:
     keyserver: keyserver.ubuntu.com
@@ -60,9 +42,6 @@
     - fonts-firacode
     - sublime-merge
     - sublime-text
-    - docker-ce
-    - docker-ce-cli
-    - containerd.io
     - xclip # For micro
     - balena-etcher-electron
   become_user: root

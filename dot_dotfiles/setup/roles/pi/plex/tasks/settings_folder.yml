@@ -1,0 +1,45 @@
+# https://medium.com/@nem25/plex-media-server-on-raspberry-pi-3-using-raspbian-lite-stretch-feace75f2b1d
+
+- name: Create a folder on HDD for Plex settings
+  file:
+    path: /media/usb/Plex
+    state: directory
+
+- name: Check the current settings folder
+  stat:
+    path: /var/lib/plexmediaserver/Library/Application Support/Plex Media Server
+  register: plex_folder_exists
+
+- name: Backup the folder
+  copy:
+    src: /var/lib/plexmediaserver/Library/Application Support/Plex Media Server
+    dest: /var/lib/plexmediaserver/Library/Application Support/Plex Media Server.backup
+  when: plex_folder_exists.stat.isdir is defined and plex_folder_exists.stat.isdir
+  become_user: plex
+  become_method: sudo
+  become: yes
+
+
+- name: Copy the folder
+  copy:
+    src: /var/lib/plexmediaserver/Library/Application Support/Plex Media Server
+    dest: /media/usb/Plex
+  when: plex_folder_exists.stat.isdir is defined and plex_folder_exists.stat.isdir
+  become_user: plex
+  become: yes
+
+- name: Remove the folder
+  file:
+    path: /var/lib/plexmediaserver/Library/Application Support/Plex Media Server
+    state: absent 
+  when: plex_folder_exists.stat.isdir is defined and plex_folder_exists.stat.isdir
+  become_user: plex
+  become: yes
+
+- name: Create a symlink of Plex folder to HDD
+  file:
+    src: /var/lib/plexmediaserver/Library/Application Support/Plex Media Server 
+    dest: /media/usb/Plex
+    state: link
+  become_user: plex
+  become: yes

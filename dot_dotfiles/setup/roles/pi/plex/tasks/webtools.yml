@@ -1,0 +1,30 @@
+- name: Check if WebTools are installed
+  stat:
+    path: /var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Plug-ins/WebTools.bundle
+  register: folder
+
+- name: Create plugins folder
+  file:
+    path: /var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Plug-ins/
+    state: directory
+
+- name: Download WebTools
+  get_url: 
+    url: https://github.com/ukdtom/WebTools.bundle/releases/download/3.0.0/WebTools.bundle.zip
+    dest: /tmp/webtools.zip
+  when: folder.stat.exists == False
+
+- name: Unarchive
+  unarchive:
+    src: /tmp/webtools.zip
+    dest: /var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Plug-ins/
+    remote_src: yes
+  become_user: plex
+  become: yes
+  when: folder.stat.exists == False
+
+- name: Restart service plexmediaserver
+  service:
+    name: plexmediaserver
+    state: restarted
+  when: folder.stat.exists == False

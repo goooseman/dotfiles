@@ -1,0 +1,35 @@
+- hosts: all
+  roles:
+    - ubuntu/zsh
+    - pi/docker
+    - pi/aria2
+    - pi/plex
+
+- hosts: all
+  become: yes
+  become_user: root
+  tasks:
+    - name: Turn off ssh by password auth
+      lineinfile:
+        destfile: /etc/ssh/sshd_config
+        regexp: '^PasswordAuthentication'
+        line: 'PasswordAuthentication no'
+    - name: Turn off ssh for root user
+      lineinfile:
+        destfile: /etc/ssh/sshd_config
+        regexp: '^PermitRootLogin'
+        line: 'PermitRootLogin no'
+    - name: Install a list of packages
+      apt:
+        name: "{{ packages }}"
+      vars:
+        packages:
+        - connectd
+        - usbmount
+      become_user: root
+      become: yes
+    - name: Enable shared MountFlags so usbmount will work
+      lineinfile:
+        destfile: /lib/systemd/system/systemd-udevd.service
+        regexp: '^MountFlags'
+        line: 'MountFlags=shared'

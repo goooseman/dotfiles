@@ -1,0 +1,43 @@
+- name: Check if plexmediaserver is installed
+  command: dpkg-query -W plexmediaserver
+  register: plexmediaserver_check_deb
+  failed_when: plexmediaserver_check_deb.rc > 1
+  changed_when: plexmediaserver_check_deb.rc == 1
+
+- name: Download plexmediaserver
+  get_url: 
+    url: https://downloads.plex.tv/plex-media-server-new/1.15.4.993-bb4a2cb6c/debian/plexmediaserver_1.15.4.993-bb4a2cb6c_armhf.deb
+    dest: /tmp/plexmediaserver.deb
+  when: plexmediaserver_check_deb.rc == 1
+
+- name: Install plexmediaserver
+  apt:
+    deb: /tmp/plexmediaserver.deb
+  when: plexmediaserver_check_deb.rc == 1
+  become_user: root
+  become: yes
+
+- name: Plex apt repository key
+  apt_key:
+    url: https://downloads.plex.tv/plex-keys/PlexSign.key
+  become_user: root
+  become: yes
+
+- name: Plex apt repository
+  apt_repository:
+    repo: deb https://downloads.plex.tv/repo/deb public main
+    state: present
+  become_user: root
+  become: yes
+
+- name: Upgrade all packages to the latest version
+  apt:
+    upgrade: yes
+    update_cache: yes
+  become_user: root
+  become: yes
+
+# - include: settings_folder.yml
+- include: webtools.yml
+- include: trakt.yml
+- include: kinopub.yml

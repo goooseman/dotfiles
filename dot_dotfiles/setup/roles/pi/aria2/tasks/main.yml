@@ -1,0 +1,56 @@
+- include: secret.yml
+
+- name: Pull webui-aria2 image
+  docker_image:
+    name: goooseman/webui-aria2:arm32v7
+  become: yes
+  become_user: root
+  ignore_errors: true
+
+- name: Check local webui-aria2 image
+  shell: docker images 'goooseman/webui-aria2:arm32v7' | grep 'webui-aria2'
+  register: is_build
+  become: yes
+  become_user: root
+  ignore_errors: true
+  changed_when: no
+
+- name: Ensures /tmp/webui-aria2/ dir exists
+  file:
+    path: /tmp/webui-aria2/
+    state: directory
+  when: is_build.stdout == ""
+
+- name: Download webui-aria2 Dockerfile
+  when: is_build.stdout == ""
+  git:
+    repo: https://github.com/goooseman/webui-aria2.git
+    version: patch-1
+    dest: /tmp/webui-aria2/
+    accept_hostkey: true
+
+- name: Build aria2 docker image
+  docker_image:
+    path: /tmp/webui-aria2/
+    name: goooseman/webui-aria2
+    dockerfile: Dockerfile.arm32v7
+    tag: arm32v7
+  when: is_build.stdout == ""
+  become: yes
+  become_user: root
+
+- include: conf.yml
+
+- name: Create a aria2 container
+  docker_container:
+    name: webui-aria2
+    image: goooseman/webui-aria2:arm32v7
+    volumes:
+      - /home/pi/.aria2:/home/aria/.aria2
+      - /media/usb:/data/downloads
+    ports:
+      - "6800:6800"
+      - "3001:8080"
+    restart_policy: always
+  become: yes
+  become_user: root

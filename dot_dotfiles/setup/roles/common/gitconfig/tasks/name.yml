@@ -1,0 +1,18 @@
+- name: Get current git name
+  git_config:
+    name: user.name
+    scope: global
+  register: current_git_name
+
+- name: Ask user for his name to set up git
+  pause:
+    prompt: "What is your git full name (ex. Alexander Gusev)?"
+  register: git_name
+  when: current_git_name.config_value | length == 0
+
+- name: Set git name
+  git_config:
+    name: user.name
+    scope: global
+    value: "{{git_name.user_input}}"
+  when: current_git_name.config_value | length == 0

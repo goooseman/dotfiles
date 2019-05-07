@@ -1,0 +1,33 @@
+- name: Check if Trakt is installed
+  stat:
+    path: /var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Plug-ins/Trakttv.bundle
+  register: folder
+
+- name: Create plugins folder
+  file:
+    path: /var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Plug-ins/
+    state: directory
+
+- name: Download Trakt
+  get_url: 
+    url: https://github.com/trakt/Plex-Trakt-Scrobbler/archive/master.zip
+    dest: /tmp/trakt.zip
+  when: folder.stat.exists == False
+
+- name: Unarchive
+  unarchive:
+    src: /tmp/trakt.zip
+    dest: /tmp
+    remote_src: yes
+  when: folder.stat.exists == False
+
+- name: Copy trakt bundle to Plex plugins
+  copy:
+    src: /tmp/Plex-Trakt-Scrobbler-master/Trakttv.bundle
+    dest: /var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Plug-ins/Trakttv.bundle
+
+- name: Restart service plexmediaserver
+  service:
+    name: plexmediaserver
+    state: restarted
+  when: folder.stat.exists == False
