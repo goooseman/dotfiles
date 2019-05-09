@@ -19,10 +19,22 @@
     src: /tmp/kinopub.zip
     dest: /var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Plug-ins/
     remote_src: yes
+  become_user: root
+  become: yes
   when: folder.stat.exists == False
+
+- name: Change permissions to plex
+  file:
+    path: /var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Plug-ins/
+    state: directory
+    recurse: yes
+    owner: plex
+    group: plex
 
 - name: Restart service plexmediaserver
   service:
     name: plexmediaserver
     state: restarted
-  when: folder.stat.exists == False
+  become_user: root
+  become: yes
+  when: folder.stat.exists == False 
