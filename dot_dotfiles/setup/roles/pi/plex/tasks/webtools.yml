@@ -30,6 +30,8 @@
     recurse: yes
     owner: plex
     group: plex
+  become_user: root
+  become: yes
 
 - name: Restart service plexmediaserver
   service:
