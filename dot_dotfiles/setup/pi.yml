@@ -26,3 +26,12 @@
       vars:
         packages:
         - connectd
+    - name: Install a list of locales
+      locale_gen:
+        name: "{{ locales }}"
+        state: present
+      vars:
+        locales:
+        - en_US.UTF-8
+        - ru_RU.UTF-8
+        - he_IL.UTF-8
