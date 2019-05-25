@@ -1,6 +1,7 @@
 - hosts: all
   roles:
     - ubuntu/zsh
+    - pi/usbmount
     - pi/docker
     - pi/aria2
     - pi/plex
@@ -25,11 +26,11 @@
       vars:
         packages:
         - connectd
-        - usbmount
-      become_user: root
-      become: yes
-    - name: Enable shared MountFlags so usbmount will work
-      lineinfile:
-        destfile: /lib/systemd/system/systemd-udevd.service
-        regexp: '^MountFlags'
-        line: 'MountFlags=shared'
+    - name: Install a list of locales
+      locale_gen:
+        name: "{{item}}"
+        state: present
+      with_items:
+        - en_US.UTF-8
+        - ru_RU.UTF-8
+        - he_IL.UTF-8

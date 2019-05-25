@@ -1,0 +1,21 @@
+- name: Install usbmount
+  apt:
+    name: usbmount
+  become_user: root
+  become: yes
+
+- name: Enable shared MountFlags so usbmount will work
+  become_user: root
+  become: yes
+  lineinfile:
+    destfile: /lib/systemd/system/systemd-udevd.service
+    regexp: '^MountFlags'
+    line: 'MountFlags=shared'
+
+- name: Add iocharset=utf8 to mount options
+  become_user: root
+  become: yes
+  lineinfile:
+    destfile: /etc/usbmount/usbmount.conf
+    regexp: '^MOUNTOPTIONS'
+    line: 'MOUNTOPTIONS="sync,noexec,nodev,noatime,nodiratime,iocharset=utf8"'
