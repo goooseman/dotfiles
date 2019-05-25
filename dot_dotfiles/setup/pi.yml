@@ -28,10 +28,9 @@
         - connectd
     - name: Install a list of locales
       locale_gen:
-        name: "{{ locales }}"
+        name: "{{item}}"
         state: present
-      vars:
-        locales:
+      with_items:
         - en_US.UTF-8
         - ru_RU.UTF-8
         - he_IL.UTF-8
