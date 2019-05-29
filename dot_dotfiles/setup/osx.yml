@@ -31,6 +31,8 @@
           - git-flow-avh
           - micro
           - wifi-password
+          - bat
+          - ripgrep
         state: present
 
 - hosts: all
