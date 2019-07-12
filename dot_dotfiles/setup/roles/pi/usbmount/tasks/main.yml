@@ -11,11 +11,3 @@
     destfile: /lib/systemd/system/systemd-udevd.service
     regexp: '^MountFlags'
     line: 'MountFlags=shared'
-
-- name: Add iocharset=utf8 to mount options
-  become_user: root
-  become: yes
-  lineinfile:
-    destfile: /etc/usbmount/usbmount.conf
-    regexp: '^MOUNTOPTIONS'
-    line: 'MOUNTOPTIONS="sync,noexec,nodev,noatime,nodiratime,iocharset=utf8"'
