@@ -1,0 +1,13 @@
+- name: Install netatalk
+  apt:
+    name: netatalk
+  become_user: root
+  become: yes
+
+- name: Add /media/usb to netatalk
+  become_user: root
+  become: yes
+  lineinfile:
+    destfile: /etc/netatalk/AppleVolumes.default
+    regexp: '^/mnt/usb '
+    line: '/mnt/usb                "Network Disk"'

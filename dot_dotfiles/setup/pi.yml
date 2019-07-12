@@ -4,6 +4,7 @@
     - pi/usbmount
     - pi/docker
     - pi/aria2
+    - pi/afs
     - pi/plex
 
 - hosts: all
