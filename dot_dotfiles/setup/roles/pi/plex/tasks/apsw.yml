@@ -18,8 +18,7 @@
   unarchive:
     src: /tmp/cpython-2.7.tar.gz
     dest: /opt/cpython-2.7
-  become_user: root
-  become: yes
+    extra_opts: [--strip-components=1]
   when: cpython.stat.exists == False
 
 - name: Configure cpython 2.7
