@@ -1,6 +1,11 @@
-- name: Install avahi-daemon
+- name: Install avahi-daemon and avahi-alias deps
   apt:
-    name: avahi-daemon
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - python-avahi
+      - python-pip
+      - avahi-daemon
   become_user: root
   become: yes
 
