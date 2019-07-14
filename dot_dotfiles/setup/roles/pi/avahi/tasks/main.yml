@@ -9,6 +9,15 @@
   become_user: root
   become: yes
 
+- name: Install pip deps
+  pip:
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - python-daemon
+  become_user: root
+  become: yes
+
 - name: Copy all the files
   copy:
     src: ../assets/
