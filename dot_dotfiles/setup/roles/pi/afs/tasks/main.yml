@@ -11,3 +11,13 @@
     destfile: /etc/netatalk/AppleVolumes.default
     regexp: '^/mnt/usb '
     line: '/mnt/usb                "Network Disk"'
+    insertbefore: "# End of File"
+  register: config
+
+- name: Restart service netatalk
+  service:
+    name: netatalk
+    state: restarted
+  become_user: root
+  become: yes
+  when: config.changed
