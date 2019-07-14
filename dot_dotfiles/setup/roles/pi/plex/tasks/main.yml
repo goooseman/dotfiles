@@ -30,10 +30,10 @@
   become_user: root
   become: yes
 
-- name: Upgrade all packages to the latest version
+- name: Upgrade plex to the latest version
   apt:
-    upgrade: yes
-    update_cache: yes
+    name: plexmediaserver
+    state: latest
   become_user: root
   become: yes
 
