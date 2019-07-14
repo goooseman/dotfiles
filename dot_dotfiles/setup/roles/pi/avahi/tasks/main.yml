@@ -1,0 +1,26 @@
+- name: Install avahi-daemon
+  apt:
+    name: avahi-daemon
+  become_user: root
+  become: yes
+
+- name: Copy all the files
+  copy:
+    src: ../assets/
+    dest: /
+  become_user: root
+  become: yes
+  register: installation
+
+- name: Make /usr/local/bin/avahi-alias executable
+  file: dest=/usr/local/bin/avahi-alias mode=a+x
+  become_user: root
+  become: yes
+
+- name: Restart service avahi-aliases
+  service:
+    name: avahi-aliases
+    state: restarted
+  become_user: root
+  become: yes
+  when: installation.changed
