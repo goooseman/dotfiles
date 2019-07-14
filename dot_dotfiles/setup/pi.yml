@@ -2,6 +2,7 @@
   roles:
     - ubuntu/zsh
     - pi/avahi
+    - pi/nginx
     - pi/usbmount
     - pi/docker
     - pi/aria2
