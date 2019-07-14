@@ -20,6 +20,8 @@
     src: "/etc/nginx/sites-available/{{item}}"
     dest: "/etc/nginx/sites-enabled/{{item}}"
     state: link
+  become_user: root
+  become: yes
   with_items:
     - aria2
     - plex
