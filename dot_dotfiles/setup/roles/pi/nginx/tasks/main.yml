@@ -42,4 +42,4 @@
     name: nginx
   become_user: root
   become: yes
-  when: sites.changed || config.changed
+  when: sites.changed or config.changed
