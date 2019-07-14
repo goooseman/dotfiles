@@ -9,8 +9,8 @@
 
 - name: Copy nginx sites-available
   copy:
-    src: ../assets/sites-available
-    dest: /etc/nginx/sites-available
+    src: ../assets/
+    dest: /etc/nginx/
   become_user: root
   become: yes
   register: configuration
