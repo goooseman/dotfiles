@@ -27,12 +27,16 @@
   command: ./configure --enable-unicode=ucs2
   args:
     chdir: /opt/cpython-2.7
+  become_user: root
+  become: yes        
   when: cpython.stat.exists == False
 
 - name: Make cpython 2.7
   command: make
   args:
     chdir: /opt/cpython-2.7
+  become_user: root
+  become: yes
   when: cpython.stat.exists == False
 
 - name: Install libsqlite3-dev
