@@ -38,6 +38,7 @@
   become: yes
 
 # - include: settings_folder.yml
+- include: apsw.yml
 - include: webtools.yml
 - include: trakt.yml
 - include: kinopub.yml
