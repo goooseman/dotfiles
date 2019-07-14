@@ -9,8 +9,8 @@
   become: yes
   lineinfile:
     destfile: /etc/netatalk/AppleVolumes.default
-    regexp: '^/mnt/usb '
-    line: '/mnt/usb                "Network Disk"'
+    regexp: '^/media/usb '
+    line: '/media/usb                "Network Disk"'
     insertbefore: "^# End of File"
   register: config
 
