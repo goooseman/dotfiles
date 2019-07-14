@@ -11,7 +11,7 @@
   become: yes
 
 - name: Download cpython 2.7.14 archive
-  get_url: url=https://github.com/python/cpython/releases/tag/v2.7.14 dest=/tmp/cpython-2.7.tar.gz
+  get_url: url=https://github.com/python/cpython/archive/v2.7.14.tar.gz dest=/tmp/cpython-2.7.tar.gz
   when: cpython.stat.exists == False
 
 - name: Extract cpython 2.7
