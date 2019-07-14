@@ -68,6 +68,8 @@
   copy:
     src: /tmp/apsw/build/lib.linux-armv7l-2.7/apsw.so
     dest: /usr/lib/plexmediaserver/Resources/Python/lib/python2.7/lib-dynload/apsw.so
+  become_user: root
+  become: yes    
   when: apsw.stat.exists == False
 
 - name: Restart service plexmediaserver
