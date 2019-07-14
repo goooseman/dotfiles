@@ -26,6 +26,11 @@
     - aria2
     - plex
 
+- name: Default site remove
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+
 - name: Change server_names_hash_bucket_size in config
   become_user: root
   become: yes
