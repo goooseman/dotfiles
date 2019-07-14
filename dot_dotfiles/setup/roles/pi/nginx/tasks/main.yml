@@ -1,0 +1,34 @@
+- name: Install nginx
+  apt:
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - nginx
+  become_user: root
+  become: yes
+
+- name: Copy nginx sites-available
+  copy:
+    src: ../assets/sites-available
+    dest: /etc/nginx/sites-available
+  become_user: root
+  become: yes
+  register: configuration
+
+- name: Symlink to sites-enabled
+  file:
+    src: "/etc/nginx/sites-available/{{item}}"
+    dest: "/etc/nginx/sites-enabled/{{item}}"
+    state: link
+  with_items:
+    - aria2
+    - plex
+
+- name: Restart service nginx
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: nginx
+  become_user: root
+  become: yes
+  when: configuration.changed
