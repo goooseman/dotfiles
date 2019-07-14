@@ -13,7 +13,7 @@
     dest: /etc/nginx/
   become_user: root
   become: yes
-  register: configuration
+  register: sites
 
 - name: Symlink to sites-enabled
   file:
@@ -26,6 +26,15 @@
     - aria2
     - plex
 
+- name: Change server_names_hash_bucket_size in config
+  become_user: root
+  become: yes
+  lineinfile:
+    destfile: /etc/nginx/nginx.conf
+    regexp: 'server_names_hash_bucket_size'
+    line: 'server_names_hash_bucket_size 64;'
+  register: config
+
 - name: Restart service nginx
   systemd:
     state: restarted
@@ -33,4 +42,4 @@
     name: nginx
   become_user: root
   become: yes
-  when: configuration.changed
+  when: sites.changed || config.changed
