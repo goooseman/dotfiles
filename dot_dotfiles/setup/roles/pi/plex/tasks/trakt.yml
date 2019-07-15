@@ -22,7 +22,7 @@
   when: folder.stat.exists == False
 
 - name: Move trakt bundle to Plex plugins
-  command: mv /tmp/Plex-Trakt-Scrobbler-master/Trakttv.bundle /var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Plug-ins/Trakttv.bundle
+  command: "mv /tmp/Plex-Trakt-Scrobbler-master/Trakttv.bundle /var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Plug-ins/Trakttv.bundle"
   become_user: root
   become: yes
   when: folder.stat.exists == False
