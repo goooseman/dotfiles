@@ -10,7 +10,7 @@
 
 - name: Download Trakt
   get_url: 
-    url: https://github.com/trakt/Plex-Trakt-Scrobbler/archive/master.zip
+    url: https://github.com/trakt/Plex-Trakt-Scrobbler/archive/v1.3.3.zip
     dest: /tmp/trakt.zip
   when: folder.stat.exists == False
 
