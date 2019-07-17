@@ -13,7 +13,7 @@ export PATH="$HOME/.dotfiles/bin/osx:$PATH"
 {{end}}
 
 {{if eq .chezmoi.os "linux"}}
-for file in ~/.dotfiles/source/{aliases}/linux/*.sh; do
+for file in ~/.dotfiles/source/aliases/linux/*.sh; do
     [ -r "$file" ] && source "$file"
 done
 export PATH="$HOME/.dotfiles/bin/linux:$PATH"
