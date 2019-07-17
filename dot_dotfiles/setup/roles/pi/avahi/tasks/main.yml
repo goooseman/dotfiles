@@ -1,0 +1,41 @@
+- name: Install avahi-daemon and avahi-alias deps
+  apt:
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - python-avahi
+      - python-pip
+      - avahi-daemon
+  become_user: root
+  become: yes
+
+- name: Install pip deps
+  pip:
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - python-daemon
+  become_user: root
+  become: yes
+
+- name: Copy all the files
+  copy:
+    src: ../assets/
+    dest: /
+  become_user: root
+  become: yes
+  register: installation
+
+- name: Make /usr/local/bin/avahi-alias executable
+  file: dest=/usr/local/bin/avahi-alias mode=a+x
+  become_user: root
+  become: yes
+
+- name: Restart service avahi-aliases
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: avahi-aliases
+  become_user: root
+  become: yes
+  when: installation.changed

@@ -1,0 +1,81 @@
+# https://github.com/trakt/Plex-Trakt-Scrobbler/issues/521#issuecomment-473983442
+
+- name: Check if cpython 2.7 is installed
+  stat:
+    path: /opt/cpython-2.7/python
+  register: cpython
+
+- name: Ensure cpython 2.7 directory exists
+  file: path=/opt/cpython-2.7 state=directory
+  become_user: root
+  become: yes
+
+- name: Download cpython 2.7.14 archive
+  get_url: url=https://github.com/python/cpython/archive/v2.7.14.tar.gz dest=/tmp/cpython-2.7.tar.gz
+  when: cpython.stat.exists == False
+
+- name: Extract cpython 2.7
+  unarchive:
+    src: /tmp/cpython-2.7.tar.gz
+    dest: /opt/cpython-2.7
+    extra_opts: [--strip-components=1]
+  become_user: root
+  become: yes
+  when: cpython.stat.exists == False
+
+- name: Configure cpython 2.7
+  command: ./configure --enable-unicode=ucs2
+  args:
+    chdir: /opt/cpython-2.7
+  become_user: root
+  become: yes        
+  when: cpython.stat.exists == False
+
+- name: Make cpython 2.7
+  command: make
+  args:
+    chdir: /opt/cpython-2.7
+  become_user: root
+  become: yes
+  when: cpython.stat.exists == False
+
+- name: Install libsqlite3-dev
+  apt:
+    name: libsqlite3-dev
+    state: present
+  become_user: root
+  become: yes
+
+- name: Check if apsw.so is already built
+  stat:
+    path: /usr/lib/plexmediaserver/Resources/Python/lib/python2.7/lib-dynload/apsw.so 
+  register: apsw
+
+- name: Clone apsw repo and checkout
+  git:
+    repo: https://github.com/rogerbinns/apsw.git
+    dest: /tmp/apsw
+    version: 64a42163b0b056d9f30cd645a581343e4052e331
+  when: apsw.stat.exists == False
+
+- name: Build apsw
+  command: /opt/cpython-2.7/python setup.py bdist
+  args:
+    chdir: /tmp/apsw
+  when: apsw.stat.exists == False
+
+- name: Copy apsw library
+  copy:
+    src: /tmp/apsw/build/lib.linux-armv7l-2.7/apsw.so
+    dest: /usr/lib/plexmediaserver/Resources/Python/lib/python2.7/lib-dynload/apsw.so
+  become_user: root
+  become: yes    
+  when: apsw.stat.exists == False
+
+- name: Restart service plexmediaserver
+  service:
+    name: plexmediaserver
+    state: restarted
+  become_user: root
+  become: yes
+  when: apsw.stat.exists == False

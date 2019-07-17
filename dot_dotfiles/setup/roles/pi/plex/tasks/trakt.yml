@@ -10,7 +10,7 @@
 
 - name: Download Trakt
   get_url: 
-    url: https://github.com/trakt/Plex-Trakt-Scrobbler/archive/master.zip
+    url: https://github.com/trakt/Plex-Trakt-Scrobbler/archive/v1.3.3.zip
     dest: /tmp/trakt.zip
   when: folder.stat.exists == False
 
@@ -21,10 +21,8 @@
     remote_src: yes
   when: folder.stat.exists == False
 
-- name: Copy trakt bundle to Plex plugins
-  copy:
-    src: /tmp/Plex-Trakt-Scrobbler-master/Trakttv.bundle
-    dest: /var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Plug-ins/Trakttv.bundle
+- name: Move trakt bundle to Plex plugins
+  command: mv /tmp/Plex-Trakt-Scrobbler-master/Trakttv.bundle '/var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Plug-ins/Trakttv.bundle'
   become_user: root
   become: yes
   when: folder.stat.exists == False

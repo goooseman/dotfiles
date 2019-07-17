@@ -1,0 +1,50 @@
+- name: Install nginx
+  apt:
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - nginx
+  become_user: root
+  become: yes
+
+- name: Copy nginx sites-available
+  copy:
+    src: ../assets/
+    dest: /etc/nginx/
+  become_user: root
+  become: yes
+  register: sites
+
+- name: Symlink to sites-enabled
+  file:
+    src: "/etc/nginx/sites-available/{{item}}"
+    dest: "/etc/nginx/sites-enabled/{{item}}"
+    state: link
+  become_user: root
+  become: yes
+  with_items:
+    - aria2
+    - plex
+
+- name: Default site remove
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+
+- name: Change server_names_hash_bucket_size in config
+  become_user: root
+  become: yes
+  lineinfile:
+    destfile: /etc/nginx/nginx.conf
+    regexp: 'server_names_hash_bucket_size'
+    line: 'server_names_hash_bucket_size 64;'
+  register: config
+
+- name: Restart service nginx
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: nginx
+  become_user: root
+  become: yes
+  when: sites.changed or config.changed

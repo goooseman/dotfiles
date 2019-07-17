@@ -30,14 +30,15 @@
   become_user: root
   become: yes
 
-- name: Upgrade all packages to the latest version
+- name: Upgrade plex to the latest version
   apt:
-    upgrade: yes
-    update_cache: yes
+    name: plexmediaserver
+    state: latest
   become_user: root
   become: yes
 
 # - include: settings_folder.yml
+- include: apsw.yml
 - include: webtools.yml
 - include: trakt.yml
 - include: kinopub.yml

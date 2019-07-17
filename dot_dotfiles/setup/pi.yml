@@ -1,6 +1,8 @@
 - hosts: all
   roles:
     - ubuntu/zsh
+    - pi/avahi
+    - pi/nginx
     - pi/usbmount
     - pi/docker
     - pi/aria2
@@ -27,6 +29,7 @@
       vars:
         packages:
         - connectd
+        - mosh
     - name: Install a list of locales
       locale_gen:
         name: "{{item}}"
