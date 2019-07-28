@@ -1,0 +1,9 @@
+#!/bin/sh
+
+{% if 'tincvpn_'+tincvpn_network+'_ip' in hostvars[inventory_hostname] %}
+ifconfig $INTERFACE {{ hostvars[inventory_hostname]['tincvpn_'+tincvpn_network+'_ip'] }} netmask {{ tincvpn_subnet|ipaddr('netmask') }}
+{% endif %}
+
+{% for route in tincvpn_routes %}
+ip route add {{ route.network }} via {{ route.gateway }} dev $INTERFACE
+{% endfor %}

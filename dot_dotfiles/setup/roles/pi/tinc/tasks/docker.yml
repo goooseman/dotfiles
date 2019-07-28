@@ -1,0 +1,21 @@
+- name: Install docker-py pip package
+  pip:
+    name: docker-py
+  become_user: root
+  become: yes
+
+- name: Create a tinc container
+  docker_container:
+    name: tinc
+    image: jenserat/tinc
+    volumes:
+      - /etc/tinc:/etc/tinc
+    devices:
+      - /dev/net/tun
+    capabilities:
+      - NET_ADMIN
+    network_mode: host
+    restart_policy: always
+    command: "start -D -n {{ tincvpn_network }}"
+  become: yes
+  become_user: root

@@ -1,0 +1,5 @@
+[cloud]
+82.202.212.118 ansible_user=root tincvpn_default_ip=10.0.0.1
+
+[home]
+pi@raspberrypi.local ansible_user=pi tincvpn_default_ip=10.0.0.2

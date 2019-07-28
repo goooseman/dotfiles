@@ -1,0 +1,3 @@
+Address = {{ tincvpn_host_address }}
+
+{{ tincvpn_host_public_key }}

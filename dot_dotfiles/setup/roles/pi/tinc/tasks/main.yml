@@ -1,0 +1,4 @@
+- include: configuration.yml
+  static: no
+- include: docker.yml
+  static: no

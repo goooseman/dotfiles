@@ -1,0 +1,1 @@
+ansible-playbook -i "./pi_tinc_gateaway.inventory" ./pi_tinc_gateaway.yml

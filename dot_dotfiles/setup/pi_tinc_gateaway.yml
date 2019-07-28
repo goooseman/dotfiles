@@ -1,0 +1,30 @@
+# Playbook to install tinc server on some remote server and tinc on raspberry pi
+# It shares public keys to make the clients to communicate to each others
+
+- hosts: cloud
+  sudo: yes
+  remote_user: root
+  gather_facts: no
+  tasks:
+    - name: "Install python2"
+      apt:
+        name: "{{ packages }}"
+      vars:
+        packages:
+          - python-setuptools
+          - python
+          - python-pip
+    
+- hosts: cloud
+  vars:
+    tincvpn_nodename: cloud
+    tincvpn_destination: cloud
+  roles:
+    - pi/tinc
+
+- hosts: home
+  vars:
+    tincvpn_nodename: home
+    tincvpn_destination: cloud
+  roles:
+    - pi/tinc
