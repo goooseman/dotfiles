@@ -21,6 +21,24 @@
     tincvpn_destination: cloud
   roles:
     - pi/tinc
+  tasks:
+    - name: Run tcp proxy
+      docker_container:
+        name: pi-proxy
+        image: tecnativa/tcp-proxy
+        restart: yes
+        restart_policy: always
+        ports:
+          - "5000:5000"
+        env:
+          LISTEN: ":5000"
+          TALK: "10.0.0.2:80"
+          PRE_RESOLVE: "0"
+          VIRTUAL_HOST: "aria2.home.goooseman.ru,plex.home.goooseman.ru,plex-tools.home.goooseman.ru,ssh.home.goooseman.ru"
+          VIRTUAL_PORT: "5000"
+          LETSENCRYPT_HOST: "aria2.home.goooseman.ru,aria2-rpc.home.goooseman.ru,plex.home.goooseman.ru,plex-tools.home.goooseman.ru,ssh.home.goooseman.ru"
+      become: yes
+      become_user: root
 
 - hosts: home
   vars:
