@@ -1,9 +1,19 @@
 server {
     listen 80;
-    server_name aria2.raspberrypi.local;
+    server_name aria2.raspberrypi.local aria2.home.goooseman.ru;
     location / {
         proxy_set_header Host $host;
         proxy_pass http://127.0.0.1:3001;
+        proxy_redirect off;
+    }
+}
+
+server {
+    listen 80;
+    server_name aria2-rpc.raspberrypi.local aria2-rpc.home.goooseman.ru;
+    location / {
+        proxy_set_header Host $host;
+        proxy_pass http://127.0.0.1:6800;
         proxy_redirect off;
     }
 }
