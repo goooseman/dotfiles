@@ -6,3 +6,10 @@ file-allocation=falloc
 continue
 dir=/data/downloads/Media
 rpc-secret={{ aria2_secret }}
+bt-enable-lpd=true
+bt-remove-unselected-file=true
+enable-peer-exchange=true
+bt-prioritize-piece=head=100M,tail=10M
+keep-unfinished-download-result=true
+save-session=/home/aria/.aria2/session
+save-session-interval=30
