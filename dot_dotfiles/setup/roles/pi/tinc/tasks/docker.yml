@@ -15,7 +15,8 @@
     capabilities:
       - NET_ADMIN
     network_mode: host
+    restart: yes
     restart_policy: always
-    command: "{{ tincvpn_command }} -D -n {{ tincvpn_network }}"
+    command: "{{ tincvpn_command }} -D -n {{ tincvpn_network }} -d3"
   become: yes
   become_user: root

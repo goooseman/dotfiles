@@ -1,3 +1,4 @@
 Address = {{ tincvpn_host_address }}
+Subnet = {{ hostvars[inventory_hostname]['tincvpn_'+tincvpn_network+'_ip'] }}/32
 
 {{ tincvpn_host_public_key }}
