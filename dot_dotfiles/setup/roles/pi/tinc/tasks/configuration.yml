@@ -2,11 +2,15 @@
   file:
     path: "/etc/tinc/{{ tincvpn_network }}/hosts"
     state: directory
+  become_user: root
+  become: yes
 
 - name: check if RSA private key exists
   stat:
     path: "/etc/tinc/{{ tincvpn_network }}/rsa_key.priv"
   register: private_key_stat
+  become_user: root
+  become: yes
 
 - name: generate RSA private key
   command: "openssl genrsa -out /etc/tinc/{{ tincvpn_network }}/rsa_key.priv {{ tincvpn_key_bits }}"
@@ -14,14 +18,16 @@
   register: private_key_generate
   changed_when: private_key_generate.rc != 0
   failed_when: private_key_generate.rc != 0
-  notify:
-    - restart tinc VPN
+  become_user: root
+  become: yes
 
 - name: generate RSA public key
   command: "openssl rsa -in /etc/tinc/{{ tincvpn_network }}/rsa_key.priv -pubout"
   register: public_key_generate
   changed_when: False
   failed_when: public_key_generate.rc != 0
+  become_user: root
+  become: yes
 
 - name: write network profile configuration
   template:
@@ -35,8 +41,8 @@
       mode: "744"
     - file: "tinc-down"
       mode: "744"
-  notify:
-    - restart tinc VPN
+  become_user: root
+  become: yes
 
 - name: write personal host file
   template:
@@ -46,16 +52,20 @@
   vars:
     tincvpn_host_address: "{{ ansible_ssh_host }}"
     tincvpn_host_public_key: "{{ public_key_generate.stdout }}"
+  become_user: root
+  become: yes
 
 - name: download host file to coordinator
   fetch:
     src: "/etc/tinc/{{ tincvpn_network }}/hosts/{{ tincvpn_nodename }}"
     dest: "{{ tincvpn_local_directory }}/{{ tincvpn_nodename }}"
     flat: True
+  become_user: root
+  become: yes
 
 - name: upload host files to all hosts
   copy:
     src: "{{ tincvpn_local_directory }}/"
     dest: "/etc/tinc/{{ tincvpn_network }}/hosts/"
-  notify:
-    - reload tinc VPN
+  become_user: root
+  become: yes

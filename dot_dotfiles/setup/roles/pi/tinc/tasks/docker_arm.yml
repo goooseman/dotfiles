@@ -1,0 +1,38 @@
+- name: Pull tinc image
+  docker_image:
+    name: goooseman/tinc:arm32v7
+  become: yes
+  become_user: root
+  ignore_errors: true
+
+- name: Check local tinc image
+  shell: docker images 'goooseman/tinc:arm32v7' | grep 'tinc'
+  register: is_build
+  become: yes
+  become_user: root
+  ignore_errors: true
+  changed_when: no
+
+- name: Ensures /tmp/tinc/ dir exists
+  file:
+    path: /tmp/tinc/
+    state: directory
+  when: is_build.stdout == ""
+
+- name: Download tinc Dockerfile
+  when: is_build.stdout == ""
+  git:
+    repo: https://github.com/goooseman/rpi-tinc-docker.git
+    version: master
+    dest: /tmp/tinc/
+    accept_hostkey: true
+
+- name: Build tinc docker image
+  docker_image:
+    path: /tmp/tinc/
+    name: goooseman/tinc
+    dockerfile: Dockerfile
+    tag: arm32v7
+  when: is_build.stdout == ""
+  become: yes
+  become_user: root

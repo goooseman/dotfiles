@@ -1,4 +1,15 @@
+- include_vars: armv7l.yml
+  when: ansible_architecture == "armv7l"
+
+- include_vars: x86_64.yml
+  when: ansible_architecture == "x86_64"
+
 - include: configuration.yml
   static: no
+
+- include: docker_arm.yml
+  static: no
+  when: ansible_architecture == "armv7l"
+
 - include: docker.yml
   static: no

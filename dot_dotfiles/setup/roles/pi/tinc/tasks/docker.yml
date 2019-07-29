@@ -7,7 +7,7 @@
 - name: Create a tinc container
   docker_container:
     name: tinc
-    image: jenserat/tinc
+    image: "{{ tincvpn_image }}"
     volumes:
       - /etc/tinc:/etc/tinc
     devices:
@@ -16,6 +16,6 @@
       - NET_ADMIN
     network_mode: host
     restart_policy: always
-    command: "start -D -n {{ tincvpn_network }}"
+    command: "{{ tincvpn_command }} -D -n {{ tincvpn_network }}"
   become: yes
   become_user: root

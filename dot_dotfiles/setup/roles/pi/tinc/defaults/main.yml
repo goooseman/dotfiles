@@ -5,7 +5,7 @@ tincvpn_network: default
 tincvpn_key_bits: 2048
 
 # subnet (CIDR)
-tincvpn_subnet: 10.0.0.0/32
+tincvpn_subnet: 10.0.0.0/24
 
 # where to save host public keys locally
 tincvpn_local_directory: "{{ inventory_dir }}/tincvpn-hosts/{{ tincvpn_network }}"

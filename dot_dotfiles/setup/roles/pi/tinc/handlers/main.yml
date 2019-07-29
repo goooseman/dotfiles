@@ -1,9 +1,0 @@
-- name: restart tinc VPN
-  service:
-    name: tinc
-    state: restarted
-
-- name: reload tinc VPN
-  service:
-    name: tinc
-    state: reloaded
