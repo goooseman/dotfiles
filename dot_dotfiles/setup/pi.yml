@@ -29,7 +29,6 @@
         name: "{{ packages }}"
       vars:
         packages:
-        - connectd
         - mosh
     - name: Install a list of locales
       locale_gen:
