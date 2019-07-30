@@ -1,0 +1,30 @@
+- name: Check if homebrew is installed
+  stat:
+    path: /home/linuxbrew/.linuxbrew/bin
+  register: homebrew_folder
+
+- name: Install dependencies
+  apt:
+    name: "{{packages}}"
+  vars:
+    packages:
+      - build-essential
+      - curl
+      - file
+      - git
+  become: yes
+  become_user: root
+
+- name: Download homebrew installer
+  get_url: url=https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh dest=/tmp/homebrew-installer.sh
+  when: homebrew_folder.stat.exists == False
+
+- name: Execute the homebrew-installer.sh
+  command: yes | sh /tmp/homebrew-installer.sh
+  when: homebrew_folder.stat.exists == False
+  become: yes
+  become_user: root
+
+- include: packages.yml
+  when: ansible_architecture == "x86_64"
+  static: no

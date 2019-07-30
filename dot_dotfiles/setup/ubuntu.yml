@@ -13,7 +13,8 @@
     - ubuntu/zsh
     - common/robo3t
     - common/reactotron
-
+    - ubuntu/homebrew
+    
 - hosts: all
   roles:
      - role: gantsign.postman

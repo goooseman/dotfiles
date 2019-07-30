@@ -1,5 +1,6 @@
 - hosts: all
   roles:
+    - ubuntu/homebrew
     - ubuntu/zsh
     - pi/avahi
     - pi/nginx

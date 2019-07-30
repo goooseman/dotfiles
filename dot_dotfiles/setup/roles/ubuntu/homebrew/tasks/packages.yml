@@ -1,0 +1,8 @@
+- name: Install homebrew packages
+  homebrew:
+    name:
+      - micro
+      - bat
+      - ripgrep
+      - docker-compose
+    state: present
