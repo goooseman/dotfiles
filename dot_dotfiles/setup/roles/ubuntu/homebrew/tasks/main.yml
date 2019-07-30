@@ -26,3 +26,5 @@
   become_user: root
 
 - include: packages.yml
+  when: ansible_architecture == "x86_64"
+  static: no
