@@ -25,6 +25,7 @@
   with_items:
     - aria2
     - plex
+    - ssh
 
 - name: Default site remove
   file:
