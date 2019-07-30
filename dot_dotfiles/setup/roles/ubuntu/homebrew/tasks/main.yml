@@ -24,3 +24,5 @@
   when: homebrew_folder.stat.exists == False
   become: yes
   become_user: root
+
+- include: packages.yml
