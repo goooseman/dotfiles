@@ -1,0 +1,14 @@
+# https://gist.github.com/jaydenseric/220c785d6289bcfd7366
+
+FFMPEG_ARGS="-vf scale=1280:-2 -c:v libx264 -crf 18 -preset slow -profile:v baseline -level 3.0 -pix_fmt yuv420p"
+
+ffmpeg -r 40 -pattern_type glob -i 'Originals/*.JPG' $FFMPEG_ARGS 40fps.mp4
+ffmpeg -r 30 -pattern_type glob -i 'Originals/*.JPG' $FFMPEG_ARGS 30fps.mp4
+ffmpeg -r 24 -pattern_type glob -i 'Originals/*.JPG' $FFMPEG_ARGS 24fps.mp4
+ffmpeg -r 10 -pattern_type glob -i 'Originals/*.JPG' $FFMPEG_ARGS 10fps.mp4
+
+# To rotate uncomment these lines
+# ffmpeg -i 40fps.mp4 -metadata:s:v rotate="90" -codec copy 40fps-rotated.mp4
+# ffmpeg -i 30fps.mp4 -metadata:s:v rotate="90" -codec copy 30fps-rotated.mp4
+# ffmpeg -i 24fps.mp4 -metadata:s:v rotate="90" -codec copy 24fps-rotated.mp4
+# ffmpeg -i 10fps.mp4 -metadata:s:v rotate="90" -codec copy 10fps-rotated.mp4
