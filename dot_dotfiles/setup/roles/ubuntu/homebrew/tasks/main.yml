@@ -20,10 +20,8 @@
   when: homebrew_folder.stat.exists == False
 
 - name: Execute the homebrew-installer.sh
-  command: yes | sh /tmp/homebrew-installer.sh
+  command: sh /tmp/homebrew-installer.sh
   when: homebrew_folder.stat.exists == False
-  become: yes
-  become_user: root
 
 - include: packages.yml
   when: ansible_architecture == "x86_64"
