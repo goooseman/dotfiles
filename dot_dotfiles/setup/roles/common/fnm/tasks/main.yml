@@ -1,14 +1,25 @@
+- name: Install fnm dependencies
+  apt:
+    name:
+      - curl
+      - unzip
+  become: true
+  when: ansible_pkg_mgr == 'apt'
+
 - name: Check if fnm is installed
   stat:
     path: $HOME/.fnm
   register: fnm_folder
 
 - name: Download fnm installer
-  get_url: url=https://raw.githubusercontent.com/Schniz/fnm/master/.ci/install.sh dest=/tmp/fnm-installer.sh
+  get_url:
+    url: https://github.com/Schniz/fnm/raw/master/.ci/install.sh
+    dest: /tmp/fnm-installer.sh
+    mode: +x
   when: fnm_folder.stat.exists == False
 
 - name: Execute the fnm-installer.sh
-  script: /tmp/fnm-installer.sh --skip-shell
+  shell: /tmp/fnm-installer.sh --skip-shell
   when: fnm_folder.stat.exists == False
 
 - name: Remove the fnm-installer.sh
