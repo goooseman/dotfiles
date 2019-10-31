@@ -13,3 +13,8 @@
 
 - include: docker.yml
   static: no
+
+- name: Install mosh
+  apt:
+    name: mosh
+  become: true
