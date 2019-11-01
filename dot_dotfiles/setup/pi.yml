@@ -30,6 +30,7 @@
       vars:
         packages:
         - mosh
+        - tmux
     - name: Install a list of locales
       locale_gen:
         name: "{{item}}"
