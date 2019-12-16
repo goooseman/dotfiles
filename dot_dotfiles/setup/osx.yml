@@ -4,6 +4,7 @@
     - common/fnm
     - common/robo3t
     - common/reactotron
+    - common/hack-font
 - hosts: all
   tasks:
     - name: install homebrew casks apps

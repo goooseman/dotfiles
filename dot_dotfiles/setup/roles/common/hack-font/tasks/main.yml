@@ -1,0 +1,12 @@
+- name: Install hack font (apt)
+  apt:
+    name:
+      - fonts-hack-ttf
+  become: true
+  when: ansible_pkg_mgr == 'apt'
+
+- name: Install hack font (homebrew cask)
+  homebrew_cask:
+    name: homebrew/cask-fonts/font-hack
+    state: present
+  when: ansible_distribution == 'MacOSX'
