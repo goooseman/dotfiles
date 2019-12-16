@@ -39,7 +39,8 @@
       user:
         name: "{{ ansible_env.USER }}"
         shell: /bin/zsh
-        
+      become: true
+
 - hosts: all
   roles:
     - role: gantsign.visual-studio-code
