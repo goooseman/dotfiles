@@ -1,4 +1,4 @@
-eval "`$HOME/.fnm/fnm env --multi`"
+eval "`fnm env --multi`"
 
 if [ -n "$ZSH_VERSION" ]; then
   # Autoload fnm version, when cd to dir
