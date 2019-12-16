@@ -1,0 +1,26 @@
+---
+# Custom Terminal theme.
+- name: Get current Terminal profile.
+  shell: defaults read com.apple.terminal 'Default Window Settings'
+  register: terminal_theme
+  changed_when: false
+  check_mode: no
+
+- name: Copy terminal theme to tmp
+  copy:
+    src: ../assets/Desert.terminal
+    dest: /tmp/Desert.terminal
+
+- name: Ensure custom Terminal profile is added.
+  shell: open /tmp/Desert.terminal
+  changed_when: false
+  when: "'Desert' not in terminal_theme.stdout"
+
+# TODO: This doesn't work in Yosemite. Consider a different solution?
+- name: Ensure custom Terminal profile is set as default.
+  shell: "{{ item }}"
+  with_items:
+    - defaults write com.apple.terminal 'Default Window Settings' -string Desert
+    - defaults write com.apple.terminal 'Startup Window Settings' -string Desert
+  changed_when: false
+  when: "'Desert' not in terminal_theme.stdout"

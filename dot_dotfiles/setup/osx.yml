@@ -12,6 +12,7 @@
     - common/robo3t
     - common/reactotron
     - common/fira-code-font
+    - osx/terminal
 - hosts: all
   tasks:
     - name: install homebrew casks apps

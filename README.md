@@ -56,8 +56,8 @@ This project consists of two parts:
   - On Mac:
     - `~/.dotfiles/setup/osx.sh`
     - Open Terminal.app, then Preferences -> Profiles
-      - Profile: Pro (my theme is designed for a dark background Terminal)
-      - Font: Fira Code (is a must to render all icons properly)
+      - Profile: Desert (click Default button to make it default one)
+      - Font: Fira Code (should be already selected)
   - On Ubuntu
     - `~/.dotfiles/setup/ubuntu.sh`
 
