@@ -7,7 +7,7 @@
     - ubuntu/zsh
     - common/robo3t
     - common/reactotron
-    - common/hack-font
+    - common/fira-code-font
     - ubuntu/homebrew
     
 - hosts: all

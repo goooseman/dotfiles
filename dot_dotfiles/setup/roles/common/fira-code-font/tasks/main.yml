@@ -1,0 +1,12 @@
+- name: Install fira-code font (apt)
+  apt:
+    name:
+      - fonts-firacode
+  become: true
+  when: ansible_pkg_mgr == 'apt'
+
+- name: Install fira-code font (homebrew cask)
+  homebrew_cask:
+    name: homebrew/cask-fonts/font-fira-code
+    state: present
+  when: ansible_distribution == 'MacOSX'
