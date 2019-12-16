@@ -58,6 +58,8 @@ This project consists of two parts:
   - On Ubuntu
     - `~/.dotfiles/setup/ubuntu.sh`
 
+Provide your user account password if BECOME password is asked.
+
 ## WIP
 
 Current features are still **WIP**, help will be appreciated:
