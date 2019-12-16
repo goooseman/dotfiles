@@ -26,7 +26,12 @@
           - wifi-password
           - bat
           - ripgrep
+          - autojump
         state: present
+    - name: Change user shell to zsh
+      user:
+        name: "{{ ansible_env.USER }}"
+        shell: /bin/zsh
 
 - hosts: all
   roles:
