@@ -11,6 +11,7 @@
     - common/fnm
     - common/robo3t
     - common/reactotron
+    - common/fira-code-font
 - hosts: all
   tasks:
     - name: install homebrew casks apps

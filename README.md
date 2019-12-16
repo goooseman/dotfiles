@@ -55,6 +55,9 @@ This project consists of two parts:
 3. If you want to set up your computer automatically
   - On Mac:
     - `~/.dotfiles/setup/osx.sh`
+    - Open Terminal.app, then Preferences -> Profiles
+      - Profile: Pro (my theme is designed for a dark background Terminal)
+      - Font: Fira Code (is a must to render all icons properly)
   - On Ubuntu
     - `~/.dotfiles/setup/ubuntu.sh`
 

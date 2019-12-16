@@ -13,6 +13,7 @@
     - ubuntu/zsh
     - common/robo3t
     - common/reactotron
+    - common/fira-code-font
     - ubuntu/homebrew
     
 - hosts: all
