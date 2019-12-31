@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Based on https://riviera.org.uk/2018/10/23/importing-non-gopro-videos-into-gopro-quik/
+
+if [ -d "$1" ]
+then
+    mkdir "$1/GoPro Quik"
+    for filename in "$1"/*.mp4; do
+        filename_base=$(basename "$filename")
+        ffmpeg -i "$filename" \
+        -map_metadata \
+        -1 \
+        -codec copy \
+        -metadata:s handler="GoPro AVC encoder" \
+        -metadata:s handler_name=" GoPro AVC" \
+        "$1/GoPro Quik/$filename_base"
+    done
+else
+    echo "Usage: $0 directory"
+    echo "directory should contain .mp4 files"
+    echo "This script convert any .mp4 video to be used in DJI Quik software"
+fi
