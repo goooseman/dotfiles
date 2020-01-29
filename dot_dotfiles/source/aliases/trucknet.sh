@@ -1,1 +1,1 @@
-alias trucknet-prepare-demo=./server/sheduled/prepare-demo/dev-prepare-demo-env.sh
+alias trucknet-prepare-demo=./server/lib/fakeDataSeeder/dev-prepare-demo-env.sh
