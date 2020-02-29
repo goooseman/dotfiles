@@ -1,4 +1,4 @@
-for file in ~/.dotfiles/source/{boot,path,aliases}/*.sh; do
+for file in ~/.dotfiles/source/{path,boot,aliases}/*.sh; do
     [ -r "$file" ] && source "$file"
 done
 
@@ -6,14 +6,14 @@ done
 export PATH="$HOME/.dotfiles/bin:$PATH"
 
 {{if eq .chezmoi.os "darwin"}}
-for file in ~/.dotfiles/source/{aliases,boot,path}/osx/*.sh; do
+for file in ~/.dotfiles/source/{path,boot,aliases}/osx/*.sh; do
     [ -r "$file" ] && source "$file"
 done
 export PATH="$HOME/.dotfiles/bin/osx:$PATH"
 {{end}}
 
 {{if eq .chezmoi.os "linux"}}
-for file in ~/.dotfiles/source/{aliases,boot,path}/linux/*.sh; do
+for file in ~/.dotfiles/source/{path,boot,aliases}/linux/*.sh; do
     [ -r "$file" ] && source "$file"
 done
 export PATH="$HOME/.dotfiles/bin/linux:$PATH"
