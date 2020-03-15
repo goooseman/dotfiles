@@ -1,0 +1,8 @@
+if [ -z "$*" ]; then echo "No args"; fi
+
+# 3600 - one hour
+# -api GeoMaxExtSecs=10800
+
+exiftool -geotag $1 -api GeoMaxExtSecs=3600 -overwrite_original /Volumes/EOS_DIGITAL/DCIM/100CANON/*.JPG
+exiftool -geotag $1 -api GeoMaxExtSecs=3600 -overwrite_original /Volumes/EOS_DIGITAL/DCIM/101CANON/*.JPG
+# exiftool -xmp:geotag=$1 /Volumes/EOS_DIGITAL/DCIM/100CANON/*.CR2
