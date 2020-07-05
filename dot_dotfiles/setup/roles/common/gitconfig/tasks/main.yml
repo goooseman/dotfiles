@@ -13,3 +13,4 @@
     - {name: "diff.tool", value: "vscode"}
     - {name: "difftool.vscode.cmd", value: "code --wait --diff $LOCAL $REMOTE"}
     - {name: "core.excludesfile", value: "{path-to-home-dir}/.gitignore"}
+    - {name: "core.ignorecase", value: false}
