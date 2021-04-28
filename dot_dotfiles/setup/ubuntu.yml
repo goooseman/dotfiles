@@ -12,6 +12,7 @@
 
 - hosts: all
   roles:
+    - common/intuit
     - common/gitconfig
     - ubuntu/apt
     - ubuntu/docker
