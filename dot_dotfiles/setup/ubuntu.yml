@@ -1,3 +1,10 @@
+
+- hosts: all  
+- roles:
+  - role: stephdewit.nvm
+    nvm_version: 'latest'
+    nvm_node_version: '10.4.0'
+
 - hosts: all
   roles:
     - common/gitconfig
@@ -8,7 +15,7 @@
     - common/reactotron
     - common/fira-code-font
     - ubuntu/homebrew
-    
+
 - hosts: all
   roles:
      - role: gantsign.postman
