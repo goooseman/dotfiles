@@ -7,7 +7,6 @@
 - hosts: all
   roles:
     - common/gitconfig
-    - common/fnm
     - ubuntu/apt
     - ubuntu/docker
     - ubuntu/zsh
