@@ -7,6 +7,9 @@
     scope: global
     value: "{{ item.value }}"  
   with_items:    
+    - {name: "push.default", value: "current"}
+    - {name: "pull.default", value: "current"}
+    - {name: "pull.rebase", value: true}
     - {name: "core.editor",  value: "code --wait"}    
     - {name: "merge.tool", value: "vscode"}
     - {name: "mergetool.vscode.cmd", value: "code --wait $MERGED"}
