@@ -1,7 +1,0 @@
-alias kube-c-stage="kubectl config use-context k8s-staging.trucknet.io"		
-alias kube-c-prod="kubectl config use-context k8s.trucknet.io"		
-alias kops-token="kops get secrets admin --type secret -oplaintext"		
-alias pkops-token="KOPS_CLUSTER_NAME=k8s.trucknet.io kops get secrets admin --type secret -oplaintext"		
-alias kops-cname="kubectl get svc ingress-nginx-ingress-controller -o jsonpath='{.status.loadBalancer.ingress[0].hostname}' -n ingress"		
-alias kubeclean="kubectl get pods | grep Evicted | awk '{print $1}' | xargs kubectl delete pods"		
-alias kubeall="kubectl get pods -a --all-namespaces"
