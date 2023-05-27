@@ -1,1 +1,1 @@
-alias youtube_dla=youtube-dl --format bestaudio
+alias youtube_dla=youtube-dl --extract-audio --audio-format
