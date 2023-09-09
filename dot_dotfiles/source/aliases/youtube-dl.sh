@@ -1,2 +1,2 @@
-alias youtube-dla=youtube-dl --extract-audio --audio-format mp3
-alias youtube-dlv=youtube-dl --format mp4
+alias youtube-dla=youtube-dl -f 'bestaudio[ext=m4a]/mp4'
+alias youtube-dlv=youtube-dl -f 'bestvideo[ext=mp4]'
