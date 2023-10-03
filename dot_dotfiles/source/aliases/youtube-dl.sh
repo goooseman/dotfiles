@@ -1,2 +1,2 @@
-alias youtube-dla=youtube-dl -f 'bestaudio[ext=m4a]'
-alias youtube-dlv=youtube-dl -f 'bestvideo[ext=mp4]'
+alias youtube-dla=yt-dlp -f 'bestaudio[ext=m4a]'
+alias youtube-dlv=yt-dlp -f 'bestvideo[ext=mp4]'
