@@ -42,6 +42,9 @@
           - bat
           - ripgrep
           - autojump
+          - graphwiz
+          - libtool
+          - plantuml
         state: present
     - name: Change user shell to zsh
       user:
