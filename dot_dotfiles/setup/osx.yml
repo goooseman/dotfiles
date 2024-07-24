@@ -72,7 +72,7 @@
             "workbench.colorTheme": "Catppuccin Frappé",
             "workbench.iconTheme": "catppuccin-frappe",
             "workbench.editor.enablePreview": false,
-            "editor.fontFamily": "Fira Code",
+            "editor.fontFamily": "Fira Code Nerd",
             "editor.fontLigatures": true,
           }
 

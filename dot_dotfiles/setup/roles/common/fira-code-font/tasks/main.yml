@@ -7,6 +7,6 @@
 
 - name: Install fira-code font (homebrew cask)
   homebrew_cask:
-    name: homebrew/cask-fonts/font-fira-code
+    name: font-fira-code-nerd-font
     state: present
   when: ansible_distribution == 'MacOSX'
