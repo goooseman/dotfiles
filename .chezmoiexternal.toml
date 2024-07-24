@@ -1,4 +1,4 @@
-["tmux-plugins"]
+[".tmux/plugins/tpm"]
     type = "archive"
     exact = true
     stripComponents = 1
