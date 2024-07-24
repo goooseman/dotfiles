@@ -1,3 +1,7 @@
+[".config/bat/themes/Catppuccin Frappe.tmTheme"]
+    type = "file"
+    url = "https://github.com/catppuccin/bat/raw/main/themes/Catppuccin%20Frappe.tmTheme"
+    refreshPeriod = "168h"
 [".tmux/plugins/tpm"]
     type = "archive"
     exact = true

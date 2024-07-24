@@ -9,7 +9,6 @@
   roles:
     - role: stephdewit.nvm
       nvm_version: 'latest'
-      nvm_node_version: '10.4.0'
 
 - hosts: all
   roles:
@@ -24,14 +23,17 @@
     - name: install homebrew casks apps
       homebrew_cask:
         name:
-          - postman
           - sublime-text
           - sublime-merge
-          - docker
-          - android-studio
+          - iterm2
+          - raycast
         state: present
 
 - hosts: all
+  handlers:
+    - name: Build bat cache
+      command: bat cache --build
+      listen: "rebuild bat cache"
   tasks:
     - name: install homebrew packages
       homebrew:
@@ -46,6 +48,7 @@
           - libtool
           - plantuml
         state: present
+      notify: "rebuild bat cache"
     - name: Change user shell to zsh
       user:
         name: "{{ ansible_env.USER }}"
@@ -62,9 +65,21 @@
             - dbaeumer.vscode-eslint
             - ms-vscode.vscode-typescript-tslint-plugin
             - esbenp.prettier-vscode
+            - Catppuccin.catppuccin-vsc
+            - Catppuccin.catppuccin-vsc-icons
           visual_studio_code_settings: {
             "editor.rulers": [80, 100, 120],
+            "workbench.colorTheme": "Catppuccin Frappé",
+            "workbench.iconTheme": "catppuccin-frappe",
             "workbench.editor.enablePreview": false,
             "editor.fontFamily": "Fira Code",
             "editor.fontLigatures": true,
           }
+
+- hosts: all
+  roles:
+    - role: lwalley.iterm2
+      iterm2_dynamic_profiles_local:
+        - ~/.config/iterm2/Hotkey Window.json
+      iterm2_preferences_custom_folder: ~/.config/iterm2
+      iterm2_shell_integration: yes
