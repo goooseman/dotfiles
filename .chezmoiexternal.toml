@@ -1,3 +1,9 @@
+["tmux-plugins"]
+    type = "archive"
+    exact = true
+    stripComponents = 1
+    refreshPeriod = "168h"
+    url = "https://github.com/tmux-plugins/tpm/archive/master.tar.gz"
 [".oh-my-zsh"]
     type = "archive"
     url = "https://github.com/ohmyzsh/ohmyzsh/archive/master.tar.gz"

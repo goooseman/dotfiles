@@ -1,0 +1,1 @@
+alias atm=appf-webtools-mgr
