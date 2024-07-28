@@ -13,7 +13,7 @@
   shell: "curl -sSL https://rvm.io/mpapis.asc | gpg --import -"
   when: mpapis_gpg_key_exists is defined and mpapis_gpg_key_exists.rc is defined and mpapis_gpg_key_exists.rc != 0
 
-- name: Download fnm installer
+- name: Download rvm installer
   get_url: url=https://get.rvm.io dest=/tmp/rvm-installer.sh
   when: rvm_folder.stat.exists == False
 
