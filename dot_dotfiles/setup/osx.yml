@@ -47,6 +47,7 @@
           - graphwiz
           - libtool
           - plantuml
+          - eza
         state: present
       notify: "rebuild bat cache"
     - name: Change user shell to zsh
