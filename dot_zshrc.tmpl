@@ -1,3 +1,7 @@
+if [[ -n "$ZSH_DEBUGRC" ]]; then
+  zmodload zsh/zprof
+fi
+
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 export TERM=xterm-256color
@@ -32,7 +36,6 @@ plugins=(
     sublime
     sudo
     zsh-autosuggestions
-    nvm
     kubectl
     pyenv
     tmux
@@ -44,3 +47,6 @@ source "$HOME/.dotfiles/source.sh"
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
+if [[ -n "$ZSH_DEBUGRC" ]]; then
+  zprof
+fi
