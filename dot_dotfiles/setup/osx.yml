@@ -48,6 +48,7 @@
           - libtool
           - plantuml
           - eza
+          - zelij
         state: present
       notify: "rebuild bat cache"
     - name: Change user shell to zsh
