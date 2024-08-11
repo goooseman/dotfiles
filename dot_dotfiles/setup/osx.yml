@@ -49,6 +49,9 @@
           - plantuml
           - eza
           - zelij
+          - k9s
+          - lazygit
+          - mas
         state: present
       notify: "rebuild bat cache"
     - name: Change user shell to zsh
@@ -56,6 +59,18 @@
         name: "{{ ansible_env.USER }}"
         shell: /bin/zsh
       become: true
+    - name: Install a list of apps
+      community.general.mas:
+        id:
+        - 1470584107 # Dato
+        - 1288676542 # Delta
+        - 747648890 # Telegram
+        - 310633997 # WhatsApp
+        - 1289583905 # PixelmatorPro
+        - 1319778037 # iStat Menus
+        - 1573461917 # SponsorBlock Safari
+        - 1440147259 # AdGuard Safari
+      state: present
 
 - hosts: all
   roles:
