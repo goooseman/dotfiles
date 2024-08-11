@@ -1,0 +1,50 @@
+{
+    "protocol-version": "1.0",
+    "general-settings": {
+        "app-language": "en-US",
+        "allow-acceptable-ads": true,
+        "show-app-updated-disabled": false,
+        "update-filters-period": 48,
+        "show-tray-icon": false,
+        "launch-at-login": false,
+        "verbose-logging": false,
+        "hardware-acceleration-disabled": false
+    },
+    "filters": {
+        "enabled-groups": [
+            1,
+            2,
+            6,
+            7,
+            0
+        ],
+        "enabled-filters": [
+            2,
+            3,
+            10
+        ],
+        "custom-filters": [
+            {
+                "filterId": 1000,
+                "customUrl": "https://www.i-dont-care-about-cookies.eu/abp/",
+                "enabled": true,
+                "title": "I don't care about cookies",
+                "trusted": true
+            }
+        ],
+        "user-filter": {
+            "enabled": true,
+            "rules": "",
+            "disabled-rules": ""
+        },
+        "allowlist": {
+            "enabled": true,
+            "inverted": false,
+            "domains": [
+                "adblockplus.org",
+                "crdroid.net"
+            ],
+            "inverted-domains": []
+        }
+    }
+}
