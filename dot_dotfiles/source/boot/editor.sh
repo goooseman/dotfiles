@@ -1,1 +1,1 @@
-export EDITOR="code --wait"
+export EDITOR="nvim"
