@@ -1,5 +1,5 @@
-- include: name.yml
-- include: email.yml
+- include_tasks: name.yml
+- include_tasks: email.yml
 
 - name: Set git config
   git_config:

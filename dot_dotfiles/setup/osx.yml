@@ -7,15 +7,8 @@
 
 - hosts: all
   roles:
-    - role: stephdewit.nvm
-      nvm_version: 'latest'
-
-- hosts: all
-  roles:
     - common/intuit
     - common/gitconfig
-    - common/robo3t
-    - common/reactotron
     - common/fira-code-font
     - osx/terminal
 - hosts: all
@@ -70,7 +63,7 @@
         - 1319778037 # iStat Menus
         - 1573461917 # SponsorBlock Safari
         - 1440147259 # AdGuard Safari
-      state: present
+        state: present
 
 - hosts: all
   roles:

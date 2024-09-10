@@ -23,6 +23,6 @@
   command: sh /tmp/homebrew-installer.sh
   when: homebrew_folder.stat.exists == False
 
-- include: packages.yml
+- include_tasks: packages.yml
   when: ansible_architecture == "x86_64"
   static: no

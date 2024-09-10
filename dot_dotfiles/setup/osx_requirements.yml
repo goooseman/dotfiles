@@ -1,2 +1,6 @@
 - src: gantsign.visual-studio-code
 - src: stephdewit.nvm
+- name: lwalley.iterm2
+  src: ssh://git@github.com/lwalley/ansible-role-iterm2.git
+  version: master
+  scm: git

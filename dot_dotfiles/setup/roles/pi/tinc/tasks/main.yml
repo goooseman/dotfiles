@@ -4,14 +4,14 @@
 - include_vars: x86_64.yml
   when: ansible_architecture == "x86_64"
 
-- include: configuration.yml
+- include_tasks: configuration.yml
   static: no
 
-- include: docker_arm.yml
+- include_tasks: docker_arm.yml
   static: no
   when: ansible_architecture == "armv7l"
 
-- include: docker.yml
+- include_tasks: docker.yml
   static: no
 
 - name: Install mosh

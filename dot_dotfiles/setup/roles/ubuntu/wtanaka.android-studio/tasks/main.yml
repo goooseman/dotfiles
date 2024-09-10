@@ -1,7 +1,7 @@
 ---
-- include: compat.yml
+- include_tasks: compat.yml
 
-- include: include_vars.yml
+- include_tasks: include_vars.yml
 
 - name: install unzip with default package manager
   action: "{{backcompat_pkg_mgr}} name={{package_name}}"

@@ -37,8 +37,8 @@
   become_user: root
   become: yes
 
-# - include: settings_folder.yml
-- include: apsw.yml
-- include: webtools.yml
-- include: trakt.yml
-- include: kinopub.yml
+# - include_tasks: settings_folder.yml
+- include_tasks: apsw.yml
+- include_tasks: webtools.yml
+- include_tasks: trakt.yml
+- include_tasks: kinopub.yml

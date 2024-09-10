@@ -1,4 +1,4 @@
-- include: secret.yml
+- include_tasks: secret.yml
 
 - name: Pull webui-aria2 image
   docker_image:
@@ -39,7 +39,7 @@
   become: yes
   become_user: root
 
-- include: conf.yml
+- include_tasks: conf.yml
 
 - name: Create a aria2 container
   docker_container:
