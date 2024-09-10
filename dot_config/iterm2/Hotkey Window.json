@@ -518,7 +518,7 @@
     "Green Component" : 0.23660069704055786
   },
   "Name" : "Hotkey Window",
-  "Transparency" : 0.29999999999999999,
+  "Transparency" : 0.12042331560283685,
   "Horizontal Spacing" : 1,
   "Cursor Color (Dark)" : {
     "Red Component" : 0.94901960784313721,
@@ -626,6 +626,7 @@
     "Alpha Component" : 1,
     "Green Component" : 0.66666666666666663
   },
+  "Faint Text Alpha (Dark)" : 0.50777564858490565,
   "Ansi 7 Color" : {
     "Red Component" : 0.7810397744178772,
     "Color Space" : "sRGB",
@@ -633,7 +634,6 @@
     "Alpha Component" : 1,
     "Green Component" : 0.78105825185775757
   },
-  "Non Ascii Font" : "Monaco 12",
   "Ansi 6 Color (Dark)" : {
     "Red Component" : 0.50588235294117645,
     "Color Space" : "sRGB",
@@ -649,6 +649,7 @@
     "Alpha Component" : 0.25,
     "Green Component" : 0.77217715978622437
   },
+  "Non Ascii Font" : "Monaco 12",
   "Custom Directory" : "No",
   "Working Directory" : "\/Users\/agusman",
   "ASCII Anti Aliased" : true,

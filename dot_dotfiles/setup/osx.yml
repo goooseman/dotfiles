@@ -7,10 +7,18 @@
 
 - hosts: all
   roles:
+    - role: lwalley.iterm2
+      iterm2_dynamic_profiles_local:
+        - ~/.config/iterm2/Hotkey Window.json
+      iterm2_preferences_custom_folder: ~/.config/iterm2
+      iterm2_shell_integration: no
+
+
+- hosts: all
+  roles:
     - common/intuit
     - common/gitconfig
     - common/fira-code-font
-    - osx/terminal
 - hosts: all
   tasks:
     - name: install homebrew casks apps
@@ -37,11 +45,11 @@
           - bat
           - ripgrep
           - autojump
-          - graphwiz
+          - graphviz
           - libtool
           - plantuml
           - eza
-          - zelij
+          - zellij
           - k9s
           - lazygit
           - mas
@@ -86,10 +94,3 @@
             "editor.fontLigatures": true,
           }
 
-- hosts: all
-  roles:
-    - role: lwalley.iterm2
-      iterm2_dynamic_profiles_local:
-        - ~/.config/iterm2/Hotkey Window.json
-      iterm2_preferences_custom_folder: ~/.config/iterm2
-      iterm2_shell_integration: yes
