@@ -1,3 +1,4 @@
 README.md
 .oh-my-zsh/cache
 **/*.zwc
+**/*_compiled.lua
