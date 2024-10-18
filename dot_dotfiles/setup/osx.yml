@@ -13,7 +13,6 @@
       iterm2_preferences_custom_folder: ~/.config/iterm2
       iterm2_shell_integration: no
 
-
 - hosts: all
   roles:
     - common/intuit
@@ -63,14 +62,15 @@
     - name: Install a list of apps
       community.general.mas:
         id:
-        - 1470584107 # Dato
-        - 1288676542 # Delta
-        - 747648890 # Telegram
-        - 310633997 # WhatsApp
-        - 1289583905 # PixelmatorPro
-        - 1319778037 # iStat Menus
-        - 1573461917 # SponsorBlock Safari
-        - 1440147259 # AdGuard Safari
+          - 1470584107 # Dato
+          - 1288676542 # Delta
+          - 747648890 # Telegram
+          - 310633997 # WhatsApp
+          - 1289583905 # PixelmatorPro
+          - 1319778037 # iStat Menus
+          - 1573461917 # SponsorBlock Safari
+          - 1440147259 # AdGuard Safari
+          - 425264550 # Blackmagic Disk Speed Test
         state: present
 
 - hosts: all
@@ -85,12 +85,12 @@
             - esbenp.prettier-vscode
             - Catppuccin.catppuccin-vsc
             - Catppuccin.catppuccin-vsc-icons
-          visual_studio_code_settings: {
-            "editor.rulers": [80, 100, 120],
-            "workbench.colorTheme": "Catppuccin Frappé",
-            "workbench.iconTheme": "catppuccin-frappe",
-            "workbench.editor.enablePreview": false,
-            "editor.fontFamily": "Fira Code Nerd",
-            "editor.fontLigatures": true,
-          }
-
+          visual_studio_code_settings:
+            {
+              "editor.rulers": [80, 100, 120],
+              "workbench.colorTheme": "Catppuccin Frappé",
+              "workbench.iconTheme": "catppuccin-frappe",
+              "workbench.editor.enablePreview": false,
+              "editor.fontFamily": "Fira Code Nerd",
+              "editor.fontLigatures": true,
+            }
