@@ -1203,6 +1203,8 @@
 	<false/>
 	<key>HotkeyMigratedFromSingleToMulti</key>
 	<true/>
+	<key>KillSessionsOnLogout</key>
+	<true/>
 	<key>New Bookmarks</key>
 	<array>
 		<dict>
