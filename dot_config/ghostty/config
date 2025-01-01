@@ -1,0 +1,11 @@
+font-family = FiraCode Nerd Font Mono
+theme = catppuccin-mocha
+
+keybind = global:ctrl+`=toggle_quick_terminal
+
+quick-terminal-position = bottom
+quick-terminal-screen = mouse 
+quick-terminal-animation-duration = 0.2
+quick-terminal-autohide = false
+
+initial-window = false
