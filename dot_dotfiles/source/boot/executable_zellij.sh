@@ -1,2 +1,5 @@
 export ZELLIJ_AUTO_ATTACH=true
-eval "$(zellij setup --generate-auto-start zsh)"
+
+if [[ -z "$ZELLIJ" ]]; then
+    zellij attach main
+fi
