@@ -1,7 +1,7 @@
 font-family = FiraCode Nerd Font Mono
 theme = catppuccin-mocha
 
-keybind = global:ctrl+`=toggle_quick_terminal
+keybind = global:ctrl+grave_accent=toggle_quick_terminal
 
 quick-terminal-position = bottom
 quick-terminal-screen = mouse 
