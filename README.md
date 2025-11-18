@@ -6,12 +6,12 @@ This project consists of two parts:
 
 - `.dotfiles` for zsh including for oh-my-zsh with some custom aliases, boot scripts and path variables additions
 - Ansible setup playbook which you need to run on a fresh install of the system which will automatically install everything you need for a comfortable work, such as:
-    - 🔤 [Firacode font](https://app.programmingfonts.org/#firacode) - cool font for developers with ligatures.
+    - 🔤 [FiraCode Nerd Font Mono](https://github.com/Trzcin/Fira-Code-Nerd?tab=readme-ov-file) - mono-spaced dev font with patched glyphs and ligatures.
     - ⌨️ [fnm](https://github.com/Schniz/fnm) - `nvm` replacement. Installs different nodejs on your machine. Ansible will install nodejs 10.14 automatically and make it default.
     - ⌨️ [zsh](https://ohmyz.sh/) - `bash` replacement. `.dotfiles` folder includes a lot of additional stuff for `zsh`.
     - 💻 [VS Code](https://code.visualstudio.com/) - development IDE. Includes `code` cli tool.
     Following settings will automatically applied:
-        - font changed to Fira Code
+        - font changed to FiraCode Nerd Font Mono
         - ligatures enabled
         - rulers at width 80, 100, 120 are added
         - preview mode disabled (clicking the file opens it in a persistant editor)
@@ -57,7 +57,7 @@ This project consists of two parts:
     - `~/.dotfiles/setup/osx.sh`
     - Open Terminal.app, then Preferences -> Profiles
       - Profile: Desert (click Default button to make it default one)
-      - Font: Fira Code (should be already selected)
+      - Font: FiraCode Nerd Font Mono (should be already selected)
   - On Ubuntu
     - `~/.dotfiles/setup/ubuntu.sh`
 
