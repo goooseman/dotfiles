@@ -1,11 +1,12 @@
 font-family = FiraCode Nerd Font Mono
 theme = catppuccin-mocha.conf
+macos-option-as-alt = left
 
 keybind = global:ctrl+grave_accent=toggle_quick_terminal
 
-quick-terminal-position = top 
+quick-terminal-position = left
 quick-terminal-screen = mouse
-quick-terminal-size = 50%,100%
+quick-terminal-size = 40%,100%
 quick-terminal-animation-duration = 0.2
 quick-terminal-autohide = false
 
