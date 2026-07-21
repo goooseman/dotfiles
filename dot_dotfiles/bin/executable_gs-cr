@@ -1,0 +1,149 @@
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.11"
+# dependencies = []
+# ///
+"""gs-cr — create a Claude Code session: git worktree + branch + launch claude."""
+import argparse
+import os
+import re
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _gs_common import load_sessions, now_iso, save_sessions, upsert_session
+
+
+def git_repo_root() -> Path:
+    try:
+        out = subprocess.run(
+            ["git", "rev-parse", "--show-toplevel"],
+            capture_output=True, text=True, check=True,
+        )
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        raise SystemExit("gs-cr: not inside a git repository")
+    return Path(out.stdout.strip())
+
+
+def sanitize_branch_segment(name: str) -> str:
+    s = re.sub(r"[^a-z0-9_-]+", "-", name.lower()).strip("-")
+    s = re.sub(r"-{2,}", "-", s)
+    if not s:
+        raise SystemExit(
+            f"gs-cr: session name '{name}' has no valid characters for a branch/dir name"
+        )
+    return s
+
+
+def check_no_collision(repo_root: Path, worktree_path: Path, branch: str) -> None:
+    if worktree_path.exists():
+        raise SystemExit(
+            f"gs-cr: worktree already exists at {worktree_path} — "
+            f"pick a different name or run gs-op to reopen it"
+        )
+    out = subprocess.run(
+        ["git", "branch", "--list", branch],
+        cwd=repo_root, capture_output=True, text=True, check=True,
+    )
+    if out.stdout.strip():
+        raise SystemExit(
+            f"gs-cr: branch '{branch}' already exists — "
+            f"pick a different name or run gs-op to reopen it"
+        )
+
+
+def create_worktree(repo_root: Path, worktree_path: Path, branch: str) -> None:
+    worktree_path.parent.mkdir(parents=True, exist_ok=True)
+    subprocess.run(
+        ["git", "worktree", "add", str(worktree_path), "-b", branch],
+        cwd=repo_root, check=True,
+    )
+
+
+def list_ignored_files(repo_root: Path) -> list[Path]:
+    out = subprocess.run(
+        ["git", "ls-files", "--others", "--ignored", "--exclude-standard", "-z"],
+        cwd=repo_root, capture_output=True, check=True,
+    )
+    raw = out.stdout.decode().split("\0")
+    paths = [Path(p) for p in raw if p]
+    return [p for p in paths if p.parts[0] not in (".git", ".gs-worktrees")]
+
+
+def copy_gitignored_files(repo_root: Path, worktree_path: Path) -> None:
+    ignored = list_ignored_files(repo_root)
+    if not ignored:
+        return
+    copied = 0
+    for rel in ignored:
+        src = repo_root / rel
+        if not src.exists():
+            continue  # skip broken symlinks / already-vanished entries
+        dst = worktree_path / rel
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        if src.is_dir() and not src.is_symlink():
+            shutil.copytree(src, dst, dirs_exist_ok=True)
+        else:
+            shutil.copy2(src, dst, follow_symlinks=True)
+        copied += 1
+    print(f"gs-cr: copied {copied} gitignored path(s) into worktree")
+
+
+def upsert_new_session_record(repo_root: Path, session_name: str, worktree_path: Path, branch: str) -> None:
+    data = load_sessions()
+    ts = now_iso()
+    upsert_session(data, {
+        "session_name": session_name,
+        "project": str(repo_root),
+        "worktree_path": str(worktree_path),
+        "branch": branch,
+        "jira_id": None,
+        "status": "active",
+        "created_at": ts,
+        "updated_at": ts,
+    })
+    save_sessions(data)
+
+
+def maybe_rename_zellij_tab(session_name: str) -> None:
+    if not os.environ.get("ZELLIJ"):
+        return
+    zellij_bin = shutil.which("zellij")
+    if not zellij_bin:
+        return
+    subprocess.run([zellij_bin, "action", "rename-tab", session_name], check=False)
+
+
+def launch_claude(worktree_path: Path, session_name: str) -> None:
+    claude_bin = shutil.which("claude")
+    if not claude_bin:
+        raise SystemExit("gs-cr: 'claude' CLI not found on PATH")
+    os.chdir(worktree_path)
+    os.execvp(claude_bin, ["claude", "-n", session_name])
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(prog="gs-cr", description=__doc__)
+    parser.add_argument("session_name")
+    args = parser.parse_args()
+
+    repo_root = git_repo_root()
+    slug = sanitize_branch_segment(args.session_name)
+    branch = f"gs/{slug}"
+    worktree_path = repo_root / ".gs-worktrees" / slug
+
+    if slug != args.session_name:
+        print(f"gs-cr: using branch/dir name '{slug}' for session '{args.session_name}'")
+
+    check_no_collision(repo_root, worktree_path, branch)
+    create_worktree(repo_root, worktree_path, branch)
+    copy_gitignored_files(repo_root, worktree_path)
+    upsert_new_session_record(repo_root, args.session_name, worktree_path, branch)
+    maybe_rename_zellij_tab(args.session_name)
+    launch_claude(worktree_path, args.session_name)
+
+
+if __name__ == "__main__":
+    main()

@@ -11,3 +11,8 @@ Thumbs.db
 *~
 
 .aider.*
+
+**/.claude/settings.local.json
+
+# Claude Code session worktrees (gs-cr / gs-op)
+.gs-worktrees/

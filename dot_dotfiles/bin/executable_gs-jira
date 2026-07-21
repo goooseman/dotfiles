@@ -1,0 +1,62 @@
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.11"
+# dependencies = []
+# ///
+"""gs-jira — tag a gs-managed session with a Jira id."""
+import argparse
+import subprocess
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _gs_common import find_sessions, load_sessions, now_iso, save_sessions
+
+
+def try_git_repo_root() -> Path | None:
+    try:
+        out = subprocess.run(
+            ["git", "rev-parse", "--show-toplevel"],
+            capture_output=True, text=True, check=True,
+        )
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return None
+    return Path(out.stdout.strip())
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(prog="gs-jira", description=__doc__)
+    parser.add_argument("session_name")
+    parser.add_argument("jira_id")
+    args = parser.parse_args()
+
+    data = load_sessions()
+    matches = find_sessions(data, args.session_name)
+
+    if not matches:
+        raise SystemExit(f"gs-jira: no session named '{args.session_name}' found in sessions.json")
+
+    if len(matches) > 1:
+        cwd_root = try_git_repo_root()
+        if cwd_root:
+            narrowed = [m for m in matches if m["project"] == str(cwd_root)]
+            if len(narrowed) == 1:
+                matches = narrowed
+
+    if len(matches) > 1:
+        print(f"gs-jira: multiple sessions named '{args.session_name}' found:", file=sys.stderr)
+        for m in matches:
+            print(f"  - {m['project']}", file=sys.stderr)
+        raise SystemExit(
+            "gs-jira: run from inside the intended project's worktree/repo, or rename one session"
+        )
+
+    session = matches[0]
+    session["jira_id"] = args.jira_id
+    session["updated_at"] = now_iso()
+    save_sessions(data)
+    print(f"gs-jira: tagged session '{args.session_name}' with {args.jira_id}")
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,137 @@
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.11"
+# dependencies = ["textual>=0.60"]
+# ///
+"""gs-op — browse, search, and reopen Claude Code sessions."""
+import os
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _gs_common import load_sessions, now_iso, save_sessions
+
+from textual.app import App, ComposeResult
+from textual.binding import Binding
+from textual.widgets import DataTable, Footer, Header, Input
+
+COLUMNS = ("Project", "Session", "Jira", "Created", "Status")
+
+
+class GsOpApp(App):
+    BINDINGS = [
+        Binding("enter", "open_session", "Open"),
+        Binding("c", "toggle_status", "Toggle open/closed"),
+        Binding("/", "focus_search", "Search"),
+        Binding("escape", "clear_search", "Clear search", show=False),
+        Binding("q", "quit", "Quit"),
+    ]
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.data = load_sessions()
+
+    def compose(self) -> ComposeResult:
+        yield Header()
+        yield Input(placeholder="Filter by project / session / jira id...", id="search")
+        yield DataTable(id="table", cursor_type="row")
+        yield Footer()
+
+    def on_mount(self) -> None:
+        table = self.query_one(DataTable)
+        table.add_columns(*COLUMNS)
+        self.refresh_table()
+        table.focus()
+
+    def refresh_table(self, filter_text: str = "") -> None:
+        table = self.query_one(DataTable)
+        table.clear()
+        rows = sorted(
+            self.data["sessions"],
+            key=lambda s: (s["status"] != "active", s["session_name"].lower()),
+        )
+        ft = filter_text.lower()
+        for s in rows:
+            haystack = f'{s["project"]} {s["session_name"]} {s["jira_id"] or ""}'.lower()
+            if ft and ft not in haystack:
+                continue
+            table.add_row(
+                s["project"], s["session_name"], s["jira_id"] or "-",
+                s["created_at"], s["status"], key=self._row_key(s),
+            )
+
+    def _row_key(self, s: dict) -> str:
+        return f'{s["project"]}::{s["session_name"]}'
+
+    def _selected_session(self) -> dict | None:
+        table = self.query_one(DataTable)
+        if table.cursor_row is None or table.row_count == 0:
+            return None
+        row_key = table.coordinate_to_cell_key(table.cursor_coordinate).row_key
+        proj, name = str(row_key.value).split("::", 1)
+        for s in self.data["sessions"]:
+            if s["project"] == proj and s["session_name"] == name:
+                return s
+        return None
+
+    def on_input_changed(self, event: Input.Changed) -> None:
+        if event.input.id == "search":
+            self.refresh_table(event.value)
+
+    def on_data_table_row_selected(self, event: DataTable.RowSelected) -> None:
+        # DataTable owns the "enter" key itself and turns it into this message
+        # before the App-level "enter" binding ever gets a chance to fire.
+        self.action_open_session()
+
+    def action_focus_search(self) -> None:
+        self.query_one("#search", Input).focus()
+
+    def action_clear_search(self) -> None:
+        search = self.query_one("#search", Input)
+        search.value = ""
+        self.refresh_table("")
+        self.query_one(DataTable).focus()
+
+    def action_toggle_status(self) -> None:
+        session = self._selected_session()
+        if not session:
+            return
+        session["status"] = "closed" if session["status"] == "active" else "active"
+        session["updated_at"] = now_iso()
+        save_sessions(self.data)
+        self.refresh_table(self.query_one("#search", Input).value)
+
+    def action_open_session(self) -> None:
+        session = self._selected_session()
+        if not session:
+            return
+        session["status"] = "active"
+        session["updated_at"] = now_iso()
+        save_sessions(self.data)
+        self.exit(session)
+
+
+def main() -> None:
+    app = GsOpApp()
+    chosen = app.run()
+    if chosen is None:
+        return
+
+    if os.environ.get("ZELLIJ"):
+        zellij_bin = shutil.which("zellij")
+        if zellij_bin:
+            subprocess.run(
+                [zellij_bin, "action", "rename-tab", chosen["session_name"]], check=False
+            )
+
+    claude_bin = shutil.which("claude")
+    if not claude_bin:
+        raise SystemExit("gs-op: 'claude' CLI not found on PATH")
+    os.chdir(chosen["worktree_path"])
+    os.execvp(claude_bin, ["claude", "-n", chosen["session_name"]])
+
+
+if __name__ == "__main__":
+    main()
