@@ -1,6 +1,8 @@
 """Shared session-registry helpers for gs-cr / gs-op / gs-jira. Not directly executable."""
 import json
 import os
+import shutil
+import subprocess
 import sys
 import tempfile
 from datetime import datetime, timezone
@@ -82,3 +84,24 @@ def upsert_session(data: dict, session: dict) -> None:
             data["sessions"][i] = session
             return
     data["sessions"].append(session)
+
+
+def rename_zellij_tab(session_name: str) -> None:
+    if not os.environ.get("ZELLIJ"):
+        return
+    zellij_bin = shutil.which("zellij")
+    if not zellij_bin:
+        return
+    subprocess.run([zellij_bin, "action", "rename-tab", session_name], check=False)
+
+
+def resume_or_launch_claude(worktree_path, session_name: str, resume: bool) -> None:
+    """cd into worktree_path and exec claude, resuming an existing named session or starting a new one."""
+    claude_bin = shutil.which("claude")
+    if not claude_bin:
+        raise SystemExit("'claude' CLI not found on PATH")
+    os.chdir(worktree_path)
+    if resume:
+        os.execvp(claude_bin, ["claude", "--resume", session_name])
+    else:
+        os.execvp(claude_bin, ["claude", "-n", session_name])

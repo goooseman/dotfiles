@@ -5,7 +5,6 @@
 # ///
 """gs-cr — create a Claude Code session: git worktree + branch + launch claude."""
 import argparse
-import os
 import re
 import shutil
 import subprocess
@@ -13,7 +12,15 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _gs_common import load_sessions, now_iso, save_sessions, upsert_session
+from _gs_common import (
+    find_session,
+    load_sessions,
+    now_iso,
+    rename_zellij_tab,
+    resume_or_launch_claude,
+    save_sessions,
+    upsert_session,
+)
 
 
 def git_repo_root() -> Path:
@@ -107,29 +114,20 @@ def upsert_new_session_record(repo_root: Path, session_name: str, worktree_path:
     save_sessions(data)
 
 
-def maybe_rename_zellij_tab(session_name: str) -> None:
-    if not os.environ.get("ZELLIJ"):
-        return
-    zellij_bin = shutil.which("zellij")
-    if not zellij_bin:
-        return
-    subprocess.run([zellij_bin, "action", "rename-tab", session_name], check=False)
-
-
-def launch_claude(worktree_path: Path, session_name: str) -> None:
-    claude_bin = shutil.which("claude")
-    if not claude_bin:
-        raise SystemExit("gs-cr: 'claude' CLI not found on PATH")
-    os.chdir(worktree_path)
-    os.execvp(claude_bin, ["claude", "-n", session_name])
-
-
 def main() -> None:
     parser = argparse.ArgumentParser(prog="gs-cr", description=__doc__)
     parser.add_argument("session_name")
     args = parser.parse_args()
 
     repo_root = git_repo_root()
+
+    existing = find_session(load_sessions(), args.session_name, project=str(repo_root))
+    if existing is not None:
+        print(f"gs-cr: session '{args.session_name}' already exists — reopening it")
+        rename_zellij_tab(args.session_name)
+        resume_or_launch_claude(existing["worktree_path"], args.session_name, resume=True)
+        return
+
     slug = sanitize_branch_segment(args.session_name)
     branch = f"gs/{slug}"
     worktree_path = repo_root / ".gs-worktrees" / slug
@@ -141,8 +139,8 @@ def main() -> None:
     create_worktree(repo_root, worktree_path, branch)
     copy_gitignored_files(repo_root, worktree_path)
     upsert_new_session_record(repo_root, args.session_name, worktree_path, branch)
-    maybe_rename_zellij_tab(args.session_name)
-    launch_claude(worktree_path, args.session_name)
+    rename_zellij_tab(args.session_name)
+    resume_or_launch_claude(worktree_path, args.session_name, resume=False)
 
 
 if __name__ == "__main__":

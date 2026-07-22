@@ -4,14 +4,11 @@
 # dependencies = ["textual>=0.60"]
 # ///
 """gs-op — browse, search, and reopen Claude Code sessions."""
-import os
-import shutil
-import subprocess
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _gs_common import load_sessions, now_iso, save_sessions
+from _gs_common import load_sessions, now_iso, rename_zellij_tab, resume_or_launch_claude, save_sessions
 
 from textual.app import App, ComposeResult
 from textual.binding import Binding
@@ -119,18 +116,8 @@ def main() -> None:
     if chosen is None:
         return
 
-    if os.environ.get("ZELLIJ"):
-        zellij_bin = shutil.which("zellij")
-        if zellij_bin:
-            subprocess.run(
-                [zellij_bin, "action", "rename-tab", chosen["session_name"]], check=False
-            )
-
-    claude_bin = shutil.which("claude")
-    if not claude_bin:
-        raise SystemExit("gs-op: 'claude' CLI not found on PATH")
-    os.chdir(chosen["worktree_path"])
-    os.execvp(claude_bin, ["claude", "-n", chosen["session_name"]])
+    rename_zellij_tab(chosen["session_name"])
+    resume_or_launch_claude(chosen["worktree_path"], chosen["session_name"], resume=True)
 
 
 if __name__ == "__main__":
