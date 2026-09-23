@@ -50,3 +50,10 @@ fi
 ### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
 export PATH="/Users/agusman/.rd/bin:$PATH"
 ### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
+
+# ZIA-CERT-STORE-MANAGED profile.d sourcing
+if [ -d /etc/profile.d ]; then
+  for _zia_f in /etc/profile.d/*.sh; do [ -f "$_zia_f" ] && . "$_zia_f"; done
+  unset _zia_f
+fi
+# ZIA-CERT-STORE-MANAGED-END
