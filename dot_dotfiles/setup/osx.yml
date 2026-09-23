@@ -5,14 +5,6 @@
     - osx/kops
     - common/rvm
 
-- hosts: all
-  roles:
-    - role: lwalley.iterm2
-      iterm2_dynamic_profiles_local:
-        - ~/.config/iterm2/Hotkey Window.json
-      iterm2_preferences_custom_folder: ~/.config/iterm2
-      iterm2_shell_integration: no
-
 
 - hosts: all
   roles:
@@ -26,7 +18,6 @@
         name:
           - sublime-text
           - sublime-merge
-          - iterm2
           - raycast
         state: present
 
@@ -53,6 +44,8 @@
           - k9s
           - lazygit
           - mas
+          - terminal-notifier
+          - jq
         state: present
       notify: "rebuild bat cache"
     - name: Change user shell to zsh
@@ -64,13 +57,10 @@
       community.general.mas:
         id:
         - 1470584107 # Dato
-        - 1288676542 # Delta
         - 747648890 # Telegram
         - 310633997 # WhatsApp
         - 1289583905 # PixelmatorPro
         - 1319778037 # iStat Menus
-        - 1573461917 # SponsorBlock Safari
-        - 1440147259 # AdGuard Safari
         state: present
 
 - hosts: all
