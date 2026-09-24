@@ -64,6 +64,8 @@ This project consists of two parts:
       - Font: FiraCode Nerd Font Mono (should be already selected)
   - On Ubuntu
     - `~/.dotfiles/setup/ubuntu.sh`
+1. Update ssh repo to use git link:
+  - `git@github.com:goooseman/dotfiles.git`
 
 Provide your user account password if BECOME password is asked.
 
