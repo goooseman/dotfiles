@@ -27,7 +27,6 @@ This project consists of two parts:
     - 💻 [Postman](https://www.getpostman.com/) - API development and testing tool.
     - 💻 [Android Studio](https://developer.android.com/studio) - development IDE for Android developers (needed for `react-native` development).
     - ⌨️ [Docker](https://www.docker.com/) - application containerization.
-    - ⌨️ [git-flow-avh](https://github.com/petervanderdoes/gitflow-avh) - git extension to work with [Git Flow](https://danielkummer.github.io/git-flow-cheatsheet/) branching model easily.
     - ️️⌨️ [micro](https://github.com/zyedidia/micro) - terminal-based text editor.
     - ⌨️ [wifi-password](https://github.com/rauchg/wifi-password) - cli to get the password of currently connected to WiFi network. **MacOS only**
     - Additional tweaks:
@@ -45,13 +44,18 @@ This project consists of two parts:
 1. Install [chezmoi](https://github.com/twpayne/chezmoi)
   - On Mac OS:
     - `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
-    - `brew install twpayne/taps/chezmoi`
+    - `brew install chezmoi`
   - On Ubuntu:
     - `sudo apt install git`
     - `wget https://github.com/twpayne/chezmoi/releases/download/v1.4.1/chezmoi_1.4.1-527_linux_amd64.deb`
     - `sudo dpkg -i chezmoi_1.4.1-527_linux_amd64.deb`
+1. Add gpg: 
+  - `gpg --armor --import ./goooseman.asc && gpg --armor --import ./goooseman.key`
+  - `gpg --edit-key {KEY} trust quit`
+  - `mkdir -p ~/.config/chezmoi`
+  - `micro ~/.config/chezmoi/chezmoi.json`: `{ "encryption": "gpg", "gpg": { "recipient": "goooseman@me.com" } }`
 2. Init dotfiles
-  - `chezmoi init --apply https://github.com/goooseman/dotfiles.git`
+  - `chezmoi init --apply https://github.com/goooseman/dotfiles.git --branch goooseman`
 3. If you want to set up your computer automatically
   - On Mac:
     - `~/.dotfiles/setup/osx.sh`

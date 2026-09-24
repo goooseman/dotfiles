@@ -1,18 +1,19 @@
 - name: Get current git name
-  git_config:
+  community.general.git_config_info:
     name: user.name
     scope: global
   register: current_git_name
 
 - name: Ask user for his name to set up git
   pause:
-    prompt: "What is your git full name (ex. Alexander Gusev)?"
+    prompt: "What is your git full name (ex. Alexander Gusman)?"
   register: git_name
-  when: current_git_name.config_value | length == 0
+  when: current_git_name.config_value is not defined or current_git_name.config_value | length == 0
 
 - name: Set git name
-  git_config:
+  community.general.git_config:
     name: user.name
     scope: global
-    value: "{{git_name.user_input}}"
-  when: current_git_name.config_value | length == 0
+    value: "{{ git_name.user_input }}"
+    state: present
+  when: current_git_name.config_value is not defined or current_git_name.config_value | length == 0

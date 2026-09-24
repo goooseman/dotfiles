@@ -1,5 +1,5 @@
 - name: Get current git email
-  git_config:
+  community.general.git_config_info:
     name: user.email
     scope: global
   register: current_git_email
@@ -8,11 +8,12 @@
   pause:
     prompt: "What is your git full email (ex. goooseman@me.com)?"
   register: git_email
-  when: current_git_email.config_value | length == 0
+  when: current_git_email.config_value is not defined or current_git_email.config_value | length == 0
 
 - name: Set git email
-  git_config:
+  community.general.git_config:
     name: user.email
     scope: global
-    value: "{{git_email.user_input}}"
-  when: current_git_email.config_value | length == 0
+    state: present
+    value: "{{ git_email.user_input }}"
+  when: current_git_email.config_value is not defined or current_git_email.config_value | length == 0

@@ -2,18 +2,19 @@
 - include_tasks: email.yml
 
 - name: Set git config
-  git_config:
-    name: "{{ item.name }}"  
+  community.general.git_config:
+    name: "{{ item.name }}"
     scope: global
-    value: "{{ item.value }}"  
-  with_items:    
-    - {name: "push.default", value: "current"}
-    - {name: "pull.default", value: "current"}
-    - {name: "pull.rebase", value: true}
-    - {name: "core.editor",  value: "code --wait"}    
-    - {name: "merge.tool", value: "vscode"}
-    - {name: "mergetool.vscode.cmd", value: "code --wait $MERGED"}
-    - {name: "diff.tool", value: "vscode"}
-    - {name: "difftool.vscode.cmd", value: "code --wait --diff $LOCAL $REMOTE"}
-    - {name: "core.excludesfile", value: "{path-to-home-dir}/.gitignore"}
-    - {name: "core.ignorecase", value: false}
+    value: "{{ item.value }}"
+    state: present
+  with_items:
+    - { name: "push.default", value: "current" }
+    - { name: "pull.default", value: "current" }
+    - { name: "pull.rebase", value: "true" }
+    - { name: "core.editor", value: "code --wait" }
+    - { name: "merge.tool", value: "vscode" }
+    - { name: "mergetool.vscode.cmd", value: "code --wait $MERGED" }
+    - { name: "diff.tool", value: "vscode" }
+    - { name: "difftool.vscode.cmd", value: "code --wait --diff $LOCAL $REMOTE" }
+    - { name: "core.excludesfile", value: "{path-to-home-dir}/.gitignore" }
+    - { name: "core.ignorecase", value: "false" }
