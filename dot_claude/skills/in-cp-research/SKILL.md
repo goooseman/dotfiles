@@ -37,16 +37,7 @@ See [reference.md](reference.md) for copy-paste query recipes.
 
 ## Wavefront: cpclient metrics
 
-Filter by `namespace_name=` (heapster) or `source=`/`namespace=` (iks) + region `west`.
-
-| What                                    | Metric                                                                                             |
-| --------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| Pod count                               | `iks.namespace.app.pod.count` (tags `app=cpclient and namespace=... and cluster=...`)              |
-| **Absolute CPU cores** (artifact-proof) | `heapster.pod.cpu.usage_rate` (millicores; `sum(...)` = namespace total, `max(...)` = hottest pod) |
-| CPU % — all pods                        | `iks.namespace.app.container.app.cpu.utilization`                                                  |
-| CPU % — Ready pods only                 | `iks.namespace.app.container.app.ready.only.avg.cpu.utilization`                                   |
-| Memory %                                | `iks.namespace.app.pod.memory.utilization`                                                         |
-| HPA desired replicas                    | `custom.iks.kube.horizontalpodautoscaler.status.desired.replicas.gauge`                            |
+Filter by `namespace_name=` (heapster) or `source=`/`namespace=` (iks) + region `west`. Metric names (pod count, absolute CPU cores, CPU % all-pods/ready-only, memory %, HPA desired replicas) and copy-paste queries are in [reference.md](reference.md).
 
 **The CPU-% churn artifact (the big one):** the all-pods `*.cpu.utilization` = `usage ÷ limit`, averaged over ALL pods incl. not-Ready ones. A starting pod's cgroup limit can read ~0 → `usage/~0` → absurd % (seen: **5180%**). It poisons the average and can drive HPA (which takes the max across metrics) to the cap. **Always confirm with absolute cores** (`heapster.pod.cpu.usage_rate`): if % explodes while total cores stay flat, it's an artifact, not load. The `ready_only` variant excludes not-Ready pods and is the safer HPA metric. (cpclient HPA `cpclient-rollout-hpa`: `minReplicas 60 / maxReplicas 305`, aggressive `scaleUp` `Percent:100/15s stabilizationWindowSeconds:0`.)
 

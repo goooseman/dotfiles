@@ -1,6 +1,6 @@
 ---
 name: g-execute-plan
-description: Use when the user runs /g-execute-plan or asks to take an approved spec all the way to a green PR. Orchestrates spec-driven execution via async background agents (one per task, recommended model per task type), then iterative Codex code review, Jira state, PR creation, CI pipeline watch with auto-fix, and AI-reviewer comment resolution — all in one supervised loop on the current branch. Optional argument: explicit path to the spec file.
+description: Use when the user runs /g-execute-plan or asks to take an approved spec all the way to a green PR. Orchestrates spec-driven execution via async background agents (one per task, recommended model per task type), then iterative Codex code review, ticket state, PR creation, CI pipeline watch with auto-fix, and AI-reviewer comment resolution — all in one supervised loop on the current branch. Optional argument: explicit path to the spec file.
 ---
 
 # /g-execute-plan — Spec → atomic commits → green PR (supervised)
@@ -12,13 +12,21 @@ A single orchestrator that drives an approved **spec** from "ready" to "PR is gr
 1. **Derive tasks from the spec** — one task per component or coherent change, ordered by dependency (clients/helpers → integration points → config → tests → e2e verification). Record with TaskCreate.
 2. **Execute each task via an async background agent** — `Agent` tool with `run_in_background: true`, model chosen per the table below. One task → one agent → one atomic commit.
 3. **Codex review loop** — runs `/codex-review code` to apply post-implementation fixes as atomic commits.
-4. **Jira to In Progress** — via `intuit-closed-loop change-state`. Mandatory before opening a PR.
-5. **Open the PR** — via `intuit-closed-loop` (two-phase PR flow). Title must be conventional-commits, ≤72 chars, with the JIRA ID at the end.
+4. **Ticket to In Progress** — via the configured ticket-tracking skill, if any. Mandatory before opening a PR when one is configured.
+5. **Open the PR** — via the `gh` CLI. Title must be conventional-commits, ≤72 chars, with the ticket ID at the end if the workflow uses one.
 6. **Watch the pipeline** — `gh pr checks --watch`. If it fails, diagnose, fix in atomic commits, push, watch again.
 7. **AI-reviewer comment loop** — pull bot review comments, triage (agree → fix-and-commit, disagree → reply with reason), push, watch CI again.
 8. **Stop** when the PR is green, no actionable AI-reviewer comments remain, and the user has been handed back control.
 
 This skill **never merges and never force-pushes**. It pushes commits and reads CI/comments. Final merge is the user's call.
+
+## Ticket backend
+
+This skill doesn't talk to any ticket tracker directly. If a ticket-tracking
+skill is configured (e.g. `in-jira` for Jira), use its `transition-to-in-progress`
+operation and its ticket-ID format conventions for PR titles/branch names. If
+none is configured, skip the ticket-state step entirely and drop the ticket-ID
+requirement from the PR title format.
 
 ## Async agent execution model
 
@@ -38,7 +46,7 @@ When unsure between two tiers, pick the higher one.
 
 - Tasks that are independent AND touch disjoint files may be dispatched in parallel (multiple async agents in one message).
 - Dependent tasks, or tasks touching overlapping files, run strictly one at a time: dispatch → wait for the completion notification → verify → commit → dispatch the next.
-- **The orchestrator owns commits.** Agents are instructed to leave changes uncommitted; after each agent completes, the orchestrator reviews the diff, runs cheap checks (typecheck / lint on changed files), and lands exactly one atomic commit per task (via the `commit` skill, JIRA ID included). This prevents interleaved commits from parallel agents.
+- **The orchestrator owns commits.** Agents are instructed to leave changes uncommitted; after each agent completes, the orchestrator reviews the diff, runs cheap checks (typecheck / lint on changed files), and lands exactly one atomic commit per task (via the `commit` skill, ticket ID included if the workflow uses one). This prevents interleaved commits from parallel agents.
 - Each agent prompt must include: the spec path, the single task's scope ("do ONLY this task"), the relevant spec excerpts, and "do not commit; report what you changed and how you verified it".
 - If an agent's result is wrong or incomplete, send a follow-up via SendMessage to the same agent (it keeps its context) rather than spawning a fresh one.
 
@@ -49,8 +57,8 @@ These exist because each one has burned this workflow before. Violating any one 
 1. **Working tree must be clean at start.** The user's WIP can't be folded into task commits or fix commits.
 2. **One commit per logical unit.** Per spec task during execution. Per Codex finding during review. Per AI-reviewer thread during CI cycle. No bundling.
 3. **Never `--amend`, `--no-verify`, `git reset --hard`, `git push --force` (or `--force-with-lease`).** A failed hook or check is a real signal — fix it with a new commit.
-4. **Jira and PR tooling:** Jira state changes go through the DAST-Orch MCP Jira tools (`transition_issue` etc.); PR creation and all GitHub operations use the `gh` CLI directly. Do NOT use the `intuit-closed-loop` skill — the user has explicitly retired it from this workflow.
-5. **PR title format is non-negotiable.** Conventional commits, scope optional, JIRA ID at the end, ≤72 chars total. Example: `fix(auth): enable SSO CPV2-2123`. The CI commitlint check fails at 73+. Detail goes in the PR body, not the title.
+4. **Ticket state and PR tooling are separate.** Ticket state changes go through the configured ticket-tracking skill (if any); PR creation and all GitHub operations use the `gh` CLI directly.
+5. **PR title format is non-negotiable.** Conventional commits, scope optional, ticket ID at the end if the workflow uses one, ≤72 chars total. Example: `fix(auth): enable SSO CPV2-2123`. CI commitlint (where configured) commonly fails past 72 chars. Detail goes in the PR body, not the title.
 6. **Hard caps on every loop:**
    - Spec execution: as many commits as the derived task list has tasks (no creative scope expansion beyond the spec).
    - Codex review: 5 iterations (the `codex-review` skill's own cap).
@@ -89,23 +97,22 @@ Run all checks before touching anything:
 - `git rev-parse --is-inside-work-tree` — repo.
 - `git status --porcelain` — must be empty. If not, **stop**; tell the user to commit/stash first. Do NOT stash for them.
 - Resolve spec file (see Argument above). Read it end-to-end so you understand scope.
-- Extract or ask for the JIRA ticket ID. Check the branch name, the spec header, and recent commit messages for a `[A-Z][A-Z0-9]+-[0-9]+` pattern (e.g. `CPV2-15484`). If not found, **stop and ask**.
+- If a ticket-tracking skill is configured, resolve the ticket ID per its format convention (branch name, spec header, recent commit messages). If not found, **stop and ask**. If no ticket-tracking skill is configured, skip this.
 - Confirm current branch is the feature branch, not the base (`master`/`main`/`develop`). If on the base, stop.
 - Resolve base branch: `git symbolic-ref --short refs/remotes/origin/HEAD` (strip `origin/`), fallback `master` then `main`.
 - Capture `START_SHA="$(git rev-parse HEAD)"` for the final summary.
 - **Derive the task list from the spec** (components + config + tests + any multi-repo mechanics the spec defines), record via TaskCreate with dependency order, and assign each task a model tier from the table above.
-- **Show the user a one-paragraph plan-of-action** before proceeding: which spec, which Jira, which base, the derived task list with model tiers, expected loops. Give them a chance to abort.
+- **Show the user a one-paragraph plan-of-action** before proceeding: which spec, which ticket (if any), which base, the derived task list with model tiers, expected loops. Give them a chance to abort.
 
-### 1. Move Jira to In Progress
+### 1. Move ticket to In Progress
 
-Move the ticket via the DAST-Orch MCP Jira tools (`get_available_transitions` + `transition_issue`) to "In Progress". If the ticket is already in progress, that's fine — no-op and continue. If the call fails, stop and surface the error.
-
-**Verify the transition actually landed** — don't just fire `transition_issue` and assume success. Read the `status`/`statusCategory` back from the transition response (or a follow-up read) and confirm it now shows "In Progress" before moving on. A transition call can return success while the issue is left in a state a downstream gate doesn't recognize.
-
-**JIRA PMC check failing on "ticket is To Do, not In Progress":** this PR check reads Jira state at the time it last ran, not live at PR-open time — if the Jira transition happened after the check's last run (or raced it), the check can be stuck reporting stale state even though the ticket is now correctly "In Progress". Fix order matters:
-1. First confirm the Jira ticket is actually "In Progress" (per the verification above). Do not retrigger the check before this is true — retriggering against a still-stale ticket state just reproduces the same failure.
-2. Only once the ticket state is confirmed correct, retrigger the check with a double PR-title rename: `gh pr edit <N> --title "<anything-else>"` followed immediately by `gh pr edit <N> --title "<original-title>"`. The rename-back must restore the exact original title (conventional-commits format, JIRA ID, ≤72 chars) — this isn't a cosmetic toggle, it's what forces the check to re-run against current state.
-3. Re-check with `gh pr checks <N>` (allow a few seconds for the check to re-run) and confirm Jira PMC is green before proceeding.
+If a ticket-tracking skill is configured, invoke its `transition-to-in-progress`
+operation and confirm it actually landed before moving on — a transition call
+can report success while the issue is left in a state a downstream gate
+doesn't recognize. If that skill documents a stale-state gotcha for a specific
+CI check, follow its fix order rather than guessing. If the call fails, stop
+and surface the error. If no ticket-tracking skill is configured, skip this
+step.
 
 ### 2. Execute the spec via async agents
 
@@ -113,7 +120,7 @@ For each task in dependency order (parallel only when independent + disjoint fil
 
 1. Dispatch an async background agent (`run_in_background: true`, model per the task's tier) with the spec path, the task's exact scope, relevant spec excerpts, the TDD directive for logic tasks, and "do not commit".
 2. On the completion notification: review the diff against the spec, run cheap repo-local checks (typecheck, lint on changed files).
-3. Land one atomic commit (via the `commit` skill, Conventional Commits with the JIRA ID). Mark the task completed.
+3. Land one atomic commit (via the `commit` skill, Conventional Commits, ticket ID included if the workflow uses one). Mark the task completed.
 4. If the result is wrong/incomplete: SendMessage the same agent with the correction (cap: 2 follow-ups, then take over inline or stop and report).
 
 Do not run the full test suite per task — that's a phase boundary.
@@ -139,23 +146,23 @@ Invoke the `codex-review` skill with arg `code`. It will run its own iterate-and
 
 Create the PR with `gh pr create` (base = the resolved base branch). Provide:
 - A PR title that follows the format below.
-- A PR body that includes: short summary, link to the spec file, the Jira ID, "Codex review iterations: N (M findings applied, K disagreed)", testing checklist, and a "How to verify" section. End the body with the standard Claude Code attribution line.
+- A PR body that includes: short summary, link to the spec file, the ticket ID (if any), "Codex review iterations: N (M findings applied, K disagreed)", testing checklist, and a "How to verify" section. End the body with the standard Claude Code attribution line.
 
 **PR title rules** (enforced before calling `gh pr create`):
 
-- Format: `<type>(<scope>): <description> <JIRA-ID>`
+- Format: `<type>(<scope>): <description>[ <TICKET-ID>]`
 - `<type>`: one of `feat`, `fix`, `docs`, `chore`, `refactor`, `test`, `style`, `perf`, `ci`, `build`.
 - `<scope>` optional, lowercase.
 - `<description>` lowercase, no trailing period, present tense.
-- JIRA ID at the **end**, uppercase, no brackets, single space before it (e.g. `CPV2-15484`).
-- **Total length ≤72 chars.** Count it. If it's 73, trim the scope or the description. Detail goes in the body. CI commitlint will fail at 73+ and you'll be back here anyway.
+- Ticket ID (if the workflow uses one) at the **end**, uppercase, no brackets, single space before it (e.g. `CPV2-15484`).
+- **Total length ≤72 chars.** Count it. If it's 73, trim the scope or the description. Detail goes in the body.
 
 Pre-flight check before the call:
 
 ```bash
 TITLE="fix(auth): enable SSO CPV2-2123"
 [ "${#TITLE}" -le 72 ] || { echo "PR title too long: ${#TITLE} chars"; exit 1; }
-echo "$TITLE" | grep -Eq '^(feat|fix|docs|chore|refactor|test|style|perf|ci|build)(\([a-z0-9_-]+\))?: .+ [A-Z][A-Z0-9]+-[0-9]+$' \
+echo "$TITLE" | grep -Eq '^(feat|fix|docs|chore|refactor|test|style|perf|ci|build)(\([a-z0-9_-]+\))?: .+( [A-Z][A-Z0-9]+-[0-9]+)?$' \
   || { echo "PR title format invalid: $TITLE"; exit 1; }
 ```
 
@@ -182,7 +189,7 @@ For up to 3 watch iterations after each push:
      or, if it's a non-Actions check, follow the `details_url`.
    - Diagnose the actual failure (use **superpowers:systematic-debugging** if it's non-obvious — don't just retry).
    - **Distinguish**:
-     - Real failure: fix in code, commit (atomic, conventional, with JIRA ID), push. Non-trivial fixes may be dispatched to an async agent (inherit model) per the execution model above.
+     - Real failure: fix in code, commit (atomic, conventional, ticket ID included if used), push. Non-trivial fixes may be dispatched to an async agent (inherit model) per the execution model above.
      - Flake (test that's known-flaky, network blip in fetch step): re-trigger only the failing check via `gh run rerun --failed --job ...`. Do NOT push an empty commit. Cap: 1 rerun per flake.
      - Infra outage: stop the loop, report to user.
    - Push: `git push` (no force).
@@ -199,14 +206,14 @@ gh pr view "$PR_NUMBER" --json reviews,comments
 gh api "repos/{owner}/{repo}/pulls/$PR_NUMBER/comments"
 ```
 
-Filter for AI-bot reviewers (e.g. CodeRabbit, Cursor BugBot, Greptile, Coderabbitai, intuit-internal review bots — any login containing `bot`, `[bot]`, `coderabbit`, `cursor`, `greptile`, etc.). Human reviewer comments are **out of scope for this skill** — flag them in the final summary so the user handles them, but do not auto-respond.
+Filter for AI-bot reviewers (any login containing `bot`, `[bot]`, `coderabbit`, `cursor`, `greptile`, or other bot-style reviewers configured in this repo). Human reviewer comments are **out of scope for this skill** — flag them in the final summary so the user handles them, but do not auto-respond.
 
 For each AI-bot comment:
 
 1. Decide: agree / disagree / defer.
 2. **Agree** → make the fix in an atomic commit. Reply on the comment thread with `gh api ... -X POST` linking to the commit SHA: "Fixed in <sha>."
 3. **Disagree** → reply on the thread with a one-line reason. Do not just close the thread silently.
-4. **Defer** → reply with a brief reason (e.g. "out of scope for this branch; tracking in <JIRA-ID>"). If you don't have a follow-up ticket, ask the user before deferring.
+4. **Defer** → reply with a brief reason (e.g. "out of scope for this branch; tracking in <ticket-id>"). If you don't have a follow-up ticket, ask the user before deferring.
 
 After processing all comments, push, then loop back to step 6 (CI watch). New commits = new pipeline run. **Cap: 5 iterations of (review comments → fix → push → CI watch).** If still not converging, stop and hand to user.
 
@@ -218,7 +225,7 @@ When the loop terminates cleanly, print:
 g-execute-plan summary
 ======================
 Spec:        <path>
-Jira:        <JIRA-ID> (In Progress)
+Ticket:      <ticket-id-or-"none"> (In Progress)
 Branch:      <branch>  (base: <base>)
 PR:          #<n> <url>  — CI: green
 Commits:     <count>  (range: <START_SHA>..HEAD)
@@ -235,11 +242,11 @@ End with: "Ready for human review / merge. I haven't merged."
 ```dot
 digraph g_execute_plan {
     "Preflight passes?" [shape=diamond];
-    "Move Jira to In Progress" [shape=box];
+    "Move ticket to In Progress" [shape=box];
     "Execute spec tasks via async agents" [shape=box];
     "Spec tasks all green?" [shape=diamond];
     "Codex review loop" [shape=box];
-    "Open PR via closed-loop" [shape=box];
+    "Open PR" [shape=box];
     "CI watch" [shape=box];
     "CI green?" [shape=diamond];
     "Diagnose + fix + push" [shape=box];
@@ -252,14 +259,14 @@ digraph g_execute_plan {
     "Stop: blocked, hand to user" [shape=doublecircle];
     "Stop: preflight fail" [shape=doublecircle];
 
-    "Preflight passes?" -> "Move Jira to In Progress" [label="yes"];
+    "Preflight passes?" -> "Move ticket to In Progress" [label="yes"];
     "Preflight passes?" -> "Stop: preflight fail" [label="no"];
-    "Move Jira to In Progress" -> "Execute spec tasks via async agents";
+    "Move ticket to In Progress" -> "Execute spec tasks via async agents";
     "Execute spec tasks via async agents" -> "Spec tasks all green?";
     "Spec tasks all green?" -> "Stop: blocked, hand to user" [label="no"];
     "Spec tasks all green?" -> "Codex review loop" [label="yes"];
-    "Codex review loop" -> "Open PR via closed-loop";
-    "Open PR via closed-loop" -> "CI watch";
+    "Codex review loop" -> "Open PR";
+    "Open PR" -> "CI watch";
     "CI watch" -> "CI green?";
     "CI green?" -> "Fetch AI-reviewer comments" [label="yes"];
     "CI green?" -> "Push attempts < 3?" [label="no"];
@@ -275,40 +282,27 @@ digraph g_execute_plan {
 }
 ```
 
-## Rationalization table
+## Rationalizations, red flags, and common mistakes
 
-| Excuse | Reality |
-|--------|---------|
-| "Working tree has unrelated WIP, but I'll work around it." | Don't. WIP gets folded into commits and authorship is destroyed. Make the user commit/stash first. |
-| "This task is small, I'll just do it inline instead of an agent." | The async-agent model is the workflow. Inline work hides progress, skips the model-tier decision, and creeps into bundled commits. Dispatch it. |
-| "Two agents finished, I'll commit both diffs together." | One commit per task. Interleaved diffs are why the orchestrator owns commits — separate them. |
-| "The agent committed by itself, close enough." | Agents are told not to commit. If one did, stop, inspect, and re-land it properly (new commit; never amend/reset). |
-| "PR title is 75 chars but it reads better." | CI commitlint fails at 73+. The "better" title fails the pipeline. Trim it. |
-| "I'll skip Jira move — the user can do it after." | The workflow contract is Jira In Progress before the PR exists. Move it now via DAST-Orch. |
-| "The DAST-Orch Jira tools are erroring, I'll skip Jira." | Transient MCP timeouts happen — retry; if it stays down, stop and surface. Don't proceed PR-first. |
-| "CI is failing, just `--no-verify` the next push." | The hook caught a real issue. Bypassing pushes broken code to a remote branch others can see. |
-| "Codex finding 4 contradicts finding 2 — pick one." | That's non-convergence. Stop the orchestrator. Don't paper over it. |
-| "Bot left 12 nits, I'll bundle into one big fix commit." | One commit per thread. Reviewers (and `git bisect`) need atomic fixes. |
-| "Test is flaky, I'll just rerun until it passes." | One rerun per flake, max. If it flakes twice, treat it as a real failure. |
-| "Force-push will tidy the history before review." | Never force-push from this skill. History stays append-only. |
-| "Human reviewer left a comment, I'll just answer it too." | Out of scope. Surface to user. Auto-responding to humans is presumptuous. |
-| "I'll batch the Codex pass and the AI-reviewer pass into one push." | They're different phases with different commit framings. Push between them. |
-| "PR is green and bot has no comments — I'll go ahead and merge." | Never. Merge is the user's decision. |
+These are the same failure modes seen three ways — the excuse you'd make, the
+signal to stop, and how it shows up in hindsight. Internalize the rule, not
+the framing.
 
-## Red flags — STOP and reset
-
-- About to use `--amend`, `--no-verify`, `--force` / `--force-with-lease`, or `git reset --hard`.
-- About to implement a spec task inline instead of dispatching an async agent.
-- About to run two agents in parallel on overlapping files without worktree isolation.
-- About to skip the Jira state move.
-- About to push a PR title >72 chars or without a JIRA ID.
-- About to merge.
-- About to bundle multiple tasks, findings, or comments into one commit.
-- About to silently skip a Codex finding or AI-reviewer comment without recording a reason.
-- About to stash the user's uncommitted work for them.
-- About to enter the 4th CI auto-fix iteration on the same failure.
-- About to enter the 6th AI-reviewer-comment iteration.
-- About to auto-respond to a human reviewer's comment.
+| Rule | Rationalization to reject | Hindsight framing |
+|------|---------------------------|--------------------|
+| One commit per task/finding/thread, never bundled. | "Two agents finished, I'll commit both diffs together." / "Bot left 12 nits, one big fix commit." | Interleaved diffs and bundled fixes defeat `git bisect` and atomic review. |
+| Every implementation task goes through an async agent. | "This task is small, I'll just do it inline." | Inline work hides progress and creeps into bundled commits. |
+| Orchestrator owns all commits; agents never commit. | "The agent committed by itself, close enough." | If one did, stop, inspect, and re-land it properly (new commit; never amend/reset). |
+| PR title ≤72 chars, ticket ID at the end if used. | "It's 75 chars but reads better." | Commitlint (where configured) fails past the limit — trim it. |
+| Never bypass a failing hook or check. | "CI is failing, just `--no-verify` the next push." | The hook caught a real issue; bypassing pushes broken code others can see. |
+| Never force-push from this skill. | "Force-push will tidy the history before review." | History stays append-only — it's the audit trail of how the PR got built. |
+| Non-convergence (contradicting findings, repeated failures) means stop, not paper over. | "Codex finding 4 contradicts finding 2 — I'll just pick one." | That's the orchestrator's signal to stop and hand to the user. |
+| One rerun per flake, max. | "Test is flaky, I'll just rerun until it passes." | Flaking twice means treat it as a real failure. |
+| Human reviewer comments are out of scope. | "I'll just answer the human's comment too." | Auto-responding to humans is presumptuous — surface it instead. |
+| Different phases get different pushes. | "I'll batch the Codex pass and the AI-reviewer pass into one push." | They're different commit framings — push between them. |
+| Merge is always the user's call. | "PR is green and bot has no comments — I'll go ahead and merge." | Never. Surface readiness, don't act on it. |
+| Multiple candidate specs means ask, not guess. | "I'll just pick the most recently modified spec." | Guessing the wrong spec wastes the whole run — ask. |
+| 4th CI auto-fix / 6th AI-reviewer iteration never happens. | "One more loop and it'll converge." | Caps exist because non-convergence is itself the signal — stop and hand to user. |
 
 **All of these mean: stop the orchestrator, surface state to the user, let them decide.**
 
@@ -320,11 +314,11 @@ gh auth status && agent status
 git status --porcelain  # must be empty
 BASE="$(git symbolic-ref --short refs/remotes/origin/HEAD 2>/dev/null || echo origin/master)"
 BRANCH="$(git rev-parse --abbrev-ref HEAD)"
-JIRA_ID="$(echo "$BRANCH" | grep -oE '[A-Z][A-Z0-9]+-[0-9]+')"  # fallback: spec header, recent commits
+TICKET_ID="$(echo "$BRANCH" | grep -oE '[A-Z][A-Z0-9]+-[0-9]+')"  # fallback: spec header, recent commits; empty if no tracker configured
 
 # PR title check
-TITLE="fix(auth): enable SSO ${JIRA_ID}"
-[ "${#TITLE}" -le 72 ] && echo "$TITLE" | grep -Eq '^(feat|fix|docs|chore|refactor|test|style|perf|ci|build)(\([a-z0-9_-]+\))?: .+ [A-Z][A-Z0-9]+-[0-9]+$'
+TITLE="fix(auth): enable SSO ${TICKET_ID}"
+[ "${#TITLE}" -le 72 ] && echo "$TITLE" | grep -Eq '^(feat|fix|docs|chore|refactor|test|style|perf|ci|build)(\([a-z0-9_-]+\))?: .+( [A-Z][A-Z0-9]+-[0-9]+)?$'
 
 # CI watch
 gh pr checks "$PR_NUMBER" --watch --fail-fast
@@ -337,15 +331,3 @@ gh api "repos/{owner}/{repo}/pulls/$PR_NUMBER/comments" \
 gh api "repos/{owner}/{repo}/pulls/$PR_NUMBER/comments/$COMMENT_ID/replies" \
   -X POST -f body="Fixed in $(git rev-parse HEAD)."
 ```
-
-## Common mistakes
-
-- **Auto-discovering the wrong spec.** Multiple specs in `docs/superpowers/specs/`? Ask. Don't guess.
-- **Doing tasks inline "because they're quick".** Every implementation task goes through an async agent with a deliberate model tier. The orchestrator only sequences, verifies, and commits.
-- **Letting agents commit.** Commit ownership belongs to the orchestrator — that's what keeps one-commit-per-task true under parallelism.
-- **Forgetting to push between phases.** Local commits don't trigger CI. Push at the boundaries.
-- **Treating a 73-char PR title as "close enough".** It isn't — commitlint fails.
-- **Auto-responding to human reviewers.** Out of scope. Surface to the user.
-- **Letting the AI-reviewer loop run forever.** Cap is 5. After that, the bot is finding new "issues" each iteration, which means the bot's threshold is wrong for this PR — escalate to user.
-- **Mixing Codex-fix commits with task-execution commits.** Different phases, different commit framings, different push boundaries.
-- **Force-pushing to "clean up" before review.** Never. The history this skill produces is the audit trail of how the PR got built.

@@ -1,5 +1,5 @@
 ---
-name: intuit-knowledge
+name: in-knowledge
 description: Use when working on Intuit-internal tools, systems, or processes and general institutional knowledge would help — accumulated learnings not specific to any single tool or service.
 ---
 
@@ -55,11 +55,8 @@ captured via the `learn` skill.
   its absence does not mean the env is missing. Do not verify the host with
   `curl`/DNS from a laptop: these hosts are VPN-scoped and resolve only from
   inside the network, so a local failure tells you nothing.
-  Updated 2026-08-14 by the repo owner: the older guidance below is obsolete.
-  - *Superseded:* a 2026-07-24 note said never to pass `BASE_URL` because it
-    caused many unrelated failures. Those issues have since been resolved. For a
-    plain master/nightly run you still don't need it; for PR validation, use the
-    dyn env.
+  For a plain master/nightly run you still don't need `BASE_URL`; for PR
+  validation, use the dyn env.
   - Note `BASE_URL` only redirects **cpclient** traffic. Test-company creation
     (F1T / TestEasy / TDS → QBO) hits shared services regardless, so it does not
     remove that load.
@@ -86,13 +83,13 @@ uv run --directory "$SK/tools/jenkins-client" jenkins-client job trigger \
 - **`TESTS_BRANCH` is usually the only param to set.** Playwright tests and all
   test-data/company-creation helpers live in `__tests/playwright/`, so for a
   change to the test harness, pointing `TESTS_BRANCH` at the branch is enough —
-  no ephemeral env needed. An ephemeral `BASE_URL` is only for *server-side*
+  no ephemeral env needed. An ephemeral `BASE_URL` is only for _server-side_
   changes that must be deployed to be exercised.
 - **Never set `PLAYWRIGHT_MOCK_MODE=on`** when validating test-data/company
   creation — mocks bypass real downstream calls, so the run proves nothing.
 - Without `--wait`, the CLI returns only `queue_item`. Resolve it to a build:
   `curl -sS -u "agusman:$(gh auth token --hostname github.intuit.com)" \
-  "https://build.intuit.com/payments/queue/item/<id>/api/json"` → `.executable.number`.
+"https://build.intuit.com/payments/queue/item/<id>/api/json"` → `.executable.number`.
 - Poll `.../job/Playwright/<n>/api/json?tree=building,result` for completion.
 - A green build is NOT proof the new code path ran — if a provider/fallback
   chain is involved, read the console log for which path was actually taken.
