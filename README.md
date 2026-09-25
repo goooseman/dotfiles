@@ -22,9 +22,6 @@ This project consists of two parts:
             - Prettier
     - 💻 [Sublime Text](https://www.sublimetext.com/) - text editor. Includes `subl` cli tool.
     - 💻 [Sublime Merge](https://www.sublimemerge.com/) - GIT client from the authors of Sublime Text. Includes `smerge` cli tool.
-    - 💻 [Robo 3T](https://robomongo.org/) - MongoDB explorer tool
-    - 💻 [Reactotron](https://github.com/infinitered/reactotron) - inspector for React Native projects.
-    - 💻 [Postman](https://www.getpostman.com/) - API development and testing tool.
     - 💻 [Android Studio](https://developer.android.com/studio) - development IDE for Android developers (needed for `react-native` development).
     - ⌨️ [Docker](https://www.docker.com/) - application containerization.
     - ⌨️ [git-flow-avh](https://github.com/petervanderdoes/gitflow-avh) - git extension to work with [Git Flow](https://danielkummer.github.io/git-flow-cheatsheet/) branching model easily.
