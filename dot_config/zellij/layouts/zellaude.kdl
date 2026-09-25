@@ -1,21 +1,22 @@
 layout {
-    pane size=1 borderless=true {
-        plugin location="tab-bar"
-    }
-    pane
-    pane size=1 borderless=true {
-        plugin location="status-bar"
-    }
-    // https://github.com/ishefi/zellaude
     default_tab_template {
         pane size=1 borderless=true {
             plugin location="https://github.com/ishefi/zellaude/releases/latest/download/zellaude.wasm"
         }
+
         children
+
         pane size=2 borderless=true {
             plugin location="zellij:status-bar"
         }
     }
+
+    // Initial tab: inherits the bars from default_tab_template.
+    // This shell pane goes where "children" appears above.
+    tab {
+        pane
+    }
+
     swap_floating_layout {
         floating_panes {
             pane x="5%" y="5%" width="90%" height="90%"

@@ -30,7 +30,6 @@
     - name: install homebrew packages
       homebrew:
         name:
-          - git-flow-avh
           - micro
           - wifi-password
           - bat
@@ -60,10 +59,12 @@
         - 747648890 # Telegram
         - 310633997 # WhatsApp
         - 1289583905 # PixelmatorPro
-        - 1319778037 # iStat Menus
+        - 6499559693 # iStat Menus
         state: present
 
 - hosts: all
+  environment:
+    NODE_OPTIONS: "--no-deprecation"
   roles:
     - role: gantsign.visual-studio-code
       users:
