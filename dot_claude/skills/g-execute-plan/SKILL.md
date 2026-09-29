@@ -1,6 +1,6 @@
 ---
 name: g-execute-plan
-description: Use when the user runs /g-execute-plan or asks to take an approved spec all the way to a green PR. Orchestrates spec-driven execution via async background agents (one per task, recommended model per task type), then iterative Codex code review, ticket state, PR creation, CI pipeline watch with auto-fix, and AI-reviewer comment resolution — all in one supervised loop on the current branch. Optional argument: explicit path to the spec file.
+description: Use when the user runs /g-execute-plan or asks to take an approved spec all the way to a green PR. Orchestrates spec-driven execution via async background agents (one per task, recommended model per task type), then iterative second-opinion code review (via in-codex-review), ticket state, PR creation, CI pipeline watch with auto-fix, and AI-reviewer comment resolution — all in one supervised loop on the current branch. Optional argument: explicit path to the spec file.
 ---
 
 # /g-execute-plan — Spec → atomic commits → green PR (supervised)
@@ -11,7 +11,7 @@ A single orchestrator that drives an approved **spec** from "ready" to "PR is gr
 
 1. **Derive tasks from the spec** — one task per component or coherent change, ordered by dependency (clients/helpers → integration points → config → tests → e2e verification). Record with TaskCreate.
 2. **Execute each task via an async background agent** — `Agent` tool with `run_in_background: true`, model chosen per the table below. One task → one agent → one atomic commit.
-3. **Codex review loop** — runs `/codex-review code` to apply post-implementation fixes as atomic commits.
+3. **Second-opinion review loop** — runs `/in-codex-review code` (Cursor's `agent` CLI, since `codex` is not permitted on this machine) to apply post-implementation fixes as atomic commits.
 4. **Ticket to In Progress** — via the configured ticket-tracking skill, if any. Mandatory before opening a PR when one is configured.
 5. **Open the PR** — via the `gh` CLI. Title must be conventional-commits, ≤72 chars, with the ticket ID at the end if the workflow uses one.
 6. **Watch the pipeline** — `gh pr checks --watch`. If it fails, diagnose, fix in atomic commits, push, watch again.
@@ -55,16 +55,16 @@ When unsure between two tiers, pick the higher one.
 These exist because each one has burned this workflow before. Violating any one breaks downstream value.
 
 1. **Working tree must be clean at start.** The user's WIP can't be folded into task commits or fix commits.
-2. **One commit per logical unit.** Per spec task during execution. Per Codex finding during review. Per AI-reviewer thread during CI cycle. No bundling.
+2. **One commit per logical unit.** Per spec task during execution. Per in-codex-review finding during review. Per AI-reviewer thread during CI cycle. No bundling.
 3. **Never `--amend`, `--no-verify`, `git reset --hard`, `git push --force` (or `--force-with-lease`).** A failed hook or check is a real signal — fix it with a new commit.
 4. **Ticket state and PR tooling are separate.** Ticket state changes go through the configured ticket-tracking skill (if any); PR creation and all GitHub operations use the `gh` CLI directly.
 5. **PR title format is non-negotiable.** Conventional commits, scope optional, ticket ID at the end if the workflow uses one, ≤72 chars total. Example: `fix(auth): enable SSO CPV2-2123`. CI commitlint (where configured) commonly fails past 72 chars. Detail goes in the PR body, not the title.
 6. **Hard caps on every loop:**
    - Spec execution: as many commits as the derived task list has tasks (no creative scope expansion beyond the spec).
-   - Codex review: 5 iterations (the `codex-review` skill's own cap).
+   - Second-opinion review: 5 iterations (the `in-codex-review` skill's own cap).
    - CI auto-fix per push: 3 attempts on the same failure mode.
    - AI-reviewer comment loop: 5 iterations.
-7. **Don't ignore disagreement.** If you disagree with a Codex finding or an AI-reviewer comment, mark it disagreed with a one-line reason and reply on the PR thread. Don't silently skip.
+7. **Don't ignore disagreement.** If you disagree with an `in-codex-review` finding or an AI-reviewer comment, mark it disagreed with a one-line reason and reply on the PR thread. Don't silently skip.
 8. **Push only after a clean local state.** Commits land, hooks pass, then push. No "push and hope CI does the lint."
 
 ## Argument
@@ -80,7 +80,7 @@ These exist because each one has burned this workflow before. Violating any one 
 
 These MUST be invoked at the marked points; do not reimplement them.
 
-- **codex-review** (`/codex-review code`) — for post-execution code review.
+- **in-codex-review** (`/in-codex-review code`) — for post-execution code review (via Cursor's `agent` CLI, not `codex`).
 - **commit** — for commit message formatting on every commit this skill makes.
 - **superpowers:verification-before-completion** — before claiming any phase is "done".
 - **superpowers:test-driven-development** — passed down into agent prompts for implementation tasks that create logic (agents write the failing test first).
@@ -93,7 +93,7 @@ These MUST be invoked at the marked points; do not reimplement them.
 Run all checks before touching anything:
 
 - `command -v gh && gh auth status` — gh CLI present and logged in.
-- `command -v agent && agent status` — Cursor CLI present and logged in (codex-review needs it).
+- `command -v agent && agent status` — Cursor CLI present and logged in (`in-codex-review` needs it).
 - `git rev-parse --is-inside-work-tree` — repo.
 - `git status --porcelain` — must be empty. If not, **stop**; tell the user to commit/stash first. Do NOT stash for them.
 - Resolve spec file (see Argument above). Read it end-to-end so you understand scope.
@@ -129,9 +129,9 @@ When all tasks are done OR a task is blocked:
 - If blocked: stop, summarize what's done and what's blocked, hand to user.
 - If done: run the project's full test suite once. Failures here are bugs in the implementation — fix them as additional atomic commits before moving on.
 
-### 3. Codex review loop
+### 3. Second-opinion review loop
 
-Invoke the `codex-review` skill with arg `code`. It will run its own iterate-and-fix loop (cap of 5 iterations, atomic commits, disagree-and-skip path, all per its skill). When it returns:
+Invoke the `in-codex-review` skill with arg `code`. It will run its own iterate-and-fix loop (cap of 5 iterations, atomic commits, disagree-and-skip path, all per its skill). When it returns:
 - Note iterations used, findings applied, findings skipped (with reasons).
 - If it stopped because the cap hit and there are still actionable findings, **stop the orchestrator** and hand to the user. A non-converging review means the implementation has a deeper issue than fix-and-commit can resolve.
 
@@ -146,7 +146,7 @@ Invoke the `codex-review` skill with arg `code`. It will run its own iterate-and
 
 Create the PR with `gh pr create` (base = the resolved base branch). Provide:
 - A PR title that follows the format below.
-- A PR body that includes: short summary, link to the spec file, the ticket ID (if any), "Codex review iterations: N (M findings applied, K disagreed)", testing checklist, and a "How to verify" section. End the body with the standard Claude Code attribution line.
+- A PR body that includes: short summary, link to the spec file, the ticket ID (if any), "Review iterations: N (M findings applied, K disagreed)", testing checklist, and a "How to verify" section. End the body with the standard Claude Code attribution line.
 
 **PR title rules** (enforced before calling `gh pr create`):
 
@@ -230,7 +230,7 @@ Branch:      <branch>  (base: <base>)
 PR:          #<n> <url>  — CI: green
 Commits:     <count>  (range: <START_SHA>..HEAD)
 Tasks:       <count> executed via async agents (<haiku>/<sonnet>/<inherit> split)
-Codex:       <iter> iterations, <applied> applied, <skipped> skipped
+Review:      <iter> iterations, <applied> applied, <skipped> skipped
 AI review:   <iter> iterations, <applied> applied, <skipped> skipped
 Human comments outstanding: <list with author + URL>  ← user action needed
 ```
@@ -245,7 +245,7 @@ digraph g_execute_plan {
     "Move ticket to In Progress" [shape=box];
     "Execute spec tasks via async agents" [shape=box];
     "Spec tasks all green?" [shape=diamond];
-    "Codex review loop" [shape=box];
+    "Second-opinion review loop" [shape=box];
     "Open PR" [shape=box];
     "CI watch" [shape=box];
     "CI green?" [shape=diamond];
@@ -264,8 +264,8 @@ digraph g_execute_plan {
     "Move ticket to In Progress" -> "Execute spec tasks via async agents";
     "Execute spec tasks via async agents" -> "Spec tasks all green?";
     "Spec tasks all green?" -> "Stop: blocked, hand to user" [label="no"];
-    "Spec tasks all green?" -> "Codex review loop" [label="yes"];
-    "Codex review loop" -> "Open PR";
+    "Spec tasks all green?" -> "Second-opinion review loop" [label="yes"];
+    "Second-opinion review loop" -> "Open PR";
     "Open PR" -> "CI watch";
     "CI watch" -> "CI green?";
     "CI green?" -> "Fetch AI-reviewer comments" [label="yes"];
@@ -296,10 +296,10 @@ the framing.
 | PR title ≤72 chars, ticket ID at the end if used. | "It's 75 chars but reads better." | Commitlint (where configured) fails past the limit — trim it. |
 | Never bypass a failing hook or check. | "CI is failing, just `--no-verify` the next push." | The hook caught a real issue; bypassing pushes broken code others can see. |
 | Never force-push from this skill. | "Force-push will tidy the history before review." | History stays append-only — it's the audit trail of how the PR got built. |
-| Non-convergence (contradicting findings, repeated failures) means stop, not paper over. | "Codex finding 4 contradicts finding 2 — I'll just pick one." | That's the orchestrator's signal to stop and hand to the user. |
+| Non-convergence (contradicting findings, repeated failures) means stop, not paper over. | "in-codex-review finding 4 contradicts finding 2 — I'll just pick one." | That's the orchestrator's signal to stop and hand to the user. |
 | One rerun per flake, max. | "Test is flaky, I'll just rerun until it passes." | Flaking twice means treat it as a real failure. |
 | Human reviewer comments are out of scope. | "I'll just answer the human's comment too." | Auto-responding to humans is presumptuous — surface it instead. |
-| Different phases get different pushes. | "I'll batch the Codex pass and the AI-reviewer pass into one push." | They're different commit framings — push between them. |
+| Different phases get different pushes. | "I'll batch the in-codex-review pass and the AI-reviewer pass into one push." | They're different commit framings — push between them. |
 | Merge is always the user's call. | "PR is green and bot has no comments — I'll go ahead and merge." | Never. Surface readiness, don't act on it. |
 | Multiple candidate specs means ask, not guess. | "I'll just pick the most recently modified spec." | Guessing the wrong spec wastes the whole run — ask. |
 | 4th CI auto-fix / 6th AI-reviewer iteration never happens. | "One more loop and it'll converge." | Caps exist because non-convergence is itself the signal — stop and hand to user. |

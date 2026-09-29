@@ -1,6 +1,6 @@
 ---
 name: g-brainstorm
-description: Use when the user runs /g-brainstorm or wants to sharpen a vague project idea into a spec. Delegates to superpowers:brainstorming, scores spec confidence, then offers a Codex second-opinion review. The spec is the final artifact — implementation happens directly from the spec, with NO separate plan stage.
+description: Use when the user runs /g-brainstorm or wants to sharpen a vague project idea into a spec. Delegates to superpowers:brainstorming, scores spec confidence, then offers a second-opinion review via in-codex-review. The spec is the final artifact — implementation happens directly from the spec, with NO separate plan stage.
 requires: superpowers@claude-plugins-official
 ---
 
@@ -11,7 +11,7 @@ This skill is a thin wrapper. Invoke `superpowers:brainstorming` via the Skill t
 > **OVERRIDE — spec only, no plan:** `superpowers:brainstorming` ends by instructing you to
 > invoke the writing-plans skill. **Do NOT follow that step.** This wrapper (per explicit
 > user preference) makes the spec the terminal artifact: brainstorm → spec → confidence
-> score → optional Codex review → implement directly from the spec. Never invoke
+> score → optional in-codex-review → implement directly from the spec. Never invoke
 > `superpowers:writing-plans`, `/plan`, or any planning skill from this workflow. To make
 > spec-driven implementation work, the spec must carry what a plan would have: exact file
 > paths, component interfaces, config keys, enumerated test cases, and acceptance criteria.
@@ -83,15 +83,15 @@ Spec confidence: X.X / 1.0
 
 **If score ≥ 0.9 (or after the user resolves the follow-up):** the spec is ready.
 
-### Offer a Codex second-opinion review of the spec
+### Offer a second-opinion review of the spec
 
-Before implementation starts, offer the user an independent review of the spec via Codex 5.3 Extra High:
+Before implementation starts, offer the user an independent review of the spec:
 
-> "Spec is ready. Want a second-opinion review from Codex before we implement? Run `/codex-review spec` — it'll iterate review-and-edit on the spec doc until it's clean or you disagree with the remaining findings."
+> "Spec is ready. Want a second-opinion review before we implement? Run `/in-codex-review spec` — it reviews the spec doc via Cursor's `agent` CLI (the `codex` CLI is not permitted on this machine) and reports findings for you to accept or disagree with."
 
 - Recommend it especially when the user is about to commit significant engineering effort against this spec, or when any of the confidence dimensions scored 0.1.
 - The user may decline, accept, or defer ("after I read it again"). Respect their choice.
-- If they accept: invoke the `codex-review` skill with arg `spec`. When it returns, re-evaluate the spec's confidence score and continue here.
+- If they accept: invoke the `in-codex-review` skill with arg `spec`. When it returns, re-evaluate the spec's confidence score and continue here.
 - If they decline or defer: continue to implementation.
 
 ### Implement directly from the spec (no plan stage)
