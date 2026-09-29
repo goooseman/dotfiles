@@ -45,6 +45,7 @@
           - mas
           - terminal-notifier
           - jq
+          - rustup
         state: present
       notify: "rebuild bat cache"
     - name: Change user shell to zsh
