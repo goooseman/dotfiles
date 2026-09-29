@@ -46,6 +46,7 @@
           - terminal-notifier
           - jq
           - rustup
+          - go
         state: present
       notify: "rebuild bat cache"
     - name: Change user shell to zsh
