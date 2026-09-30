@@ -1,1 +1,1 @@
-export PATH=/opt/homebrew/opt/rustup/bin:$PATH
+export PATH=/opt/homebrew/opt/rustup/bin:$HOME/.cargo/bin:$PATH
